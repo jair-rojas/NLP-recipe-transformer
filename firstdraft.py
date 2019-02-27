@@ -12,6 +12,13 @@ import spacy
 
 nlp = spacy.load('en')
 
+ingred2 = ['3 1/4 cups fusilli pasta','2 tablespoons butter','2 tablespoons all-purpose flour','2 cups milk','1 1/2 cups shredded Cheddar cheese, divided','3 teaspoons lemon juice','1/2 teaspoon mustard powder',' salt and ground black pepper to taste','15 ounces tuna packed in water, drained and flaked','1/4 cup dry bread crumbs']
+recipe2 = ['Preheat the oven to 350 degrees F (175 degrees C). ',
+           'Bring a large pot of lightly salted water to a boil. Cook fusilli in the boiling water, stirring occasionally, until tender yet firm to the bite, about 12 minutes. ',
+           'Meanwhile, melt butter in a saucepan over medium heat. Whisk in flour, stirring constantly for about 1 minute. Remove from heat and gradually pour in milk, whisking constantly the entire time to avoid lumps from forming. Return to heat and cook, stirring constantly, until slightly thickened, about 2 minutes. Stir in 1/2 of the Cheddar cheese. Add lemon juice, mustard powder, salt, and pepper and mix well. ',
+           'Drain fusilli and fold into the sauce. Mix in tuna. Pour mixture into an 8-inch casserole dish and sprinkle with breadcrumbs. Top with remaining Cheddar cheese. ',
+           'Bake in the preheated oven until cheese is melted and golden, about 30 minutes.' ]
+
    
 class Ingredient:
     def __init__(self, qty, unit, item, comments = None, qty_option = None):
@@ -31,7 +38,7 @@ class Ingredient:
 
 ingred = ['18 medium taco shells','2 pounds lean ground beef','1 (14 ounce) bottle ketchup','1 (8 ounce) package shredded Cheese','1 large tomato, diced','1 cup iceberg lettuce, shredded']
 
-UNITWORDS = set(['can','jar','pound','ounce','cup','packet','bottle','pinch'])
+UNITWORDS = set(['can','jar','pound','ounce','cup','packet','bottle','pinch','teaspoon','tablespoon'])
 
 def cut_s(string):
     s = string
@@ -77,11 +84,14 @@ def parse_ingred(ingreds):
             unit = line.split()[0]
             line = ' '.join(line.split()[1:])
         
-        # split string on ',' for item and comment
+        # split string on ',' for item and comment                      
+        if re.search('to taste', line):
+            line = re.sub('to taste', ' ', line)
+            comments += 'to taste'
         line = line.split(',')
         item = line[0]
         try:
-            comments = line[1]
+            comments += line[1]
         except: pass
         
         parsed_ingreds.append(Ingredient(qty,unit,item,comments,qty_opt))
@@ -89,14 +99,15 @@ def parse_ingred(ingreds):
     return(parsed_ingreds)
 
 
-recipe = ['Preheat oven to 375 degrees F (190 degrees C).',
+recipe1 = ['Preheat oven to 375 degrees F (190 degrees C).',
           'Warm taco shells for 5 minutes on the center rack in the preheated oven.',
           'In a medium skillet over medium high heat, brown the beef. Halfway through browning, pour in ketchup. Stir well and let simmer for 5 minutes.',
           'Spoon the meat mixture into the warm taco shells and top with Cheddar cheese. Return the filled taco shells to the preheated oven and bake until cheese is melted. Top each taco with a little tomato and lettuce.']
-INGREDS = parse_ingred(ingred)
-METHODS = ['top','stir','simmer','mix','spoon','warm','preheat','bake','brown','pour','return', 'pour in']
+METHODS = ['top','stir','simmer','mix','spoon','warm','preheat','bake','brown','pour','return', 'pour in','remove','bring','cook','melt','drain','mix in','add','whisk']
 sortedmethods = sorted(set([i for i in METHODS]), key=len, reverse = True)
-ingred_list = sorted(set([i.item for i in INGREDS]), key=len)
+TOOLS = ['pan','skillet','oven','bowl','pot']
+TIME = ['until','minute','hour']
+
 
 def pwords(doc):
     for token in doc:
@@ -113,23 +124,7 @@ def pdep(doc):
 
 # recipe assumptions: they all start with a verb OR they start with a prep phrase in which case, verb appears after the comma
 # and commas only exist if the sentence starts with a prep phrase
-def find_ingred(line):
-    wordoverlaps = [None] * len(line.split())
-    index = 0
-    for word in line.split():
-        num_overlap = [len(set([word]).intersection(set(i.split()))) for i in ingred_list]
-        if max(num_overlap) > 0:  #if we're able to match more than one word
-            wordoverlaps[index] = ingred_list[num_overlap.index(max(num_overlap))]  #grab the first (and thus shortest) award name that matches max(num_overlap) times
-        else:
-            wordoverlaps[index] = None
-        index += 1
-    ans = []
-    inds = []
-    for i in range(len(wordoverlaps)):
-        if wordoverlaps[i] != None:
-            ans.append(wordoverlaps[i])
-            inds.append(i)
-    return ans, inds
+
         
 def find_method(line):
     linecopy = line
@@ -152,8 +147,36 @@ class Step:
         self.time = time
         self.method=method
         self.method_opt = method_opt
+        
+    def print(self):
+        print('ingred: ', self.ingreds)
+        print('tools: ', self.tools)
+        print('time: ',self.time)
+        print('method: ', self.method)
+        print('method_opt: ', self.method_opt)
 
-def parse_recipe(recipe):
+def parse_recipe(recipe, ingreds):
+    INGREDS = parse_ingred(ingreds)
+    ingred_list = sorted(set([i.item for i in INGREDS]), key=len)
+    def find_ingred(line):
+        wordoverlaps = [None] * len(line.split())
+        index = 0
+        for word in line.split():
+            num_overlap = [len(set([word]).intersection(set(i.split()))) for i in ingred_list]
+            if max(num_overlap) > 0:  #if we're able to match more than one word
+                wordoverlaps[index] = ingred_list[num_overlap.index(max(num_overlap))]  #grab the first (and thus shortest) award name that matches max(num_overlap) times
+            else:
+                wordoverlaps[index] = None
+            index += 1
+        ans = []
+        inds = []
+        for i in range(len(wordoverlaps)):
+            if wordoverlaps[i] != None:
+                ans.append(wordoverlaps[i])
+                inds.append(i)
+        return ans, inds
+    
+    
     sentences = []
     for i in recipe:
         j = (i.split('.'))
@@ -207,7 +230,6 @@ def parse_recipe(recipe):
                         prev = i
             split.append(doc[prev:])
         splits.append(split)
-
 
     verb = ''
     verbs = []
@@ -264,7 +286,6 @@ def parse_recipe(recipe):
                             verbs.append(child)
                         for i in child.children:
                             stack.append(i)
-            print(line,'-----', verbs, ingred)
         
     #cleaning up        
     splits2 = []
@@ -278,7 +299,6 @@ def parse_recipe(recipe):
                         newsplit.append(j[prev:k])
                         prev = k
                 newsplit.append(j[prev:])
-                print(prev)
             else:
                 pass
         splits2.append(newsplit)
@@ -290,28 +310,40 @@ def parse_recipe(recipe):
     
     #work on method_opts
     methodopts = [None] * len(splits2)
+    time = [None] * len(splits2)
+    tools = [None] * len(splits2)
     for i in range(len(splits2)):
         tmplist = []
+        tmptools = []
+        tmptime = ''
         split = splits2[i]
         for j in split:
+            prep_ind = 0
+            time_ind = 0
             for k in j:
+                if k.text.lower() in set(TOOLS):
+                    tmptools.append(k.text)
                 if k.pos_ == 'ADP':
-                    tmplist.append(j)
+                    prep_ind = 1
+                if cut_s(k.text.lower()) in set(TIME):
+                    time_ind = 1
+            if time_ind == 1:
+                tmptime = j.text
+            elif prep_ind == 1:
+                tmplist.append(j)
         methodopts[i] = tmplist
+        time[i] = tmptime
+        tools[i] = tmptools
     
     steps = []
     for i in range(len(splits2)):
-        tmpstep = Step(ingredlist[i], method = verbs[i], method_opt = methodopts[i])
+        tmpstep = Step(ingredlist[i],tools=tools[i], time=time[i], method = verbs[i], method_opt = methodopts[i])
         steps.append(tmpstep)
     
-def __init__(self, ingreds = None, tools=None, time=None, method=None, method_opt= None)    
-
-
-doc = nlp(u'Apple is looking at buying U.K. startup for $1 billion')
-for token in doc:
-    print(token.text, token.pos_, token.dep_)    
+    return steps
 
 class Parsed_Recipe:
     def __init__(self, ingred_string, recipe_string):
         self.ingredients = parse_ingred(ingred_string)
         self.recipe = parse_recipe(recipe_string)
+
