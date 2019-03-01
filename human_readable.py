@@ -3,6 +3,24 @@ arr2 = [ "Preheat oven to 350 degrees F (175 degrees C). Line 2 baking sheets wi
 		 "Spread Cheddar cheese into four 6-inch circles, placed 2 inches apart.",
 		 "Bake in the preheated oven until cheese melts and is lightly brown, 6 to 8 minutes."]
 
+from parsers import *
+
+def reassemble(ingredients, steps):
+	ingredient_strs = []
+
+	for i in ingredients:
+		ingredient_strs.append(str(i.qty) + ' ' + i.qty_details + ' ' + i.unit + ' ' + i.item)
+
+	step_strs = []
+
+	for s in steps:
+		main_step = ""
+		for ss in s.substeps:
+			main_step += ss.source + '.'
+		step_strs.append(main_step)
+
+	return ingredient_strs, step_strs
+
 # Display the transformed recipe in a human-friendly format.
 def human_readable(ingr, dire):
 	print("Ingredients:")

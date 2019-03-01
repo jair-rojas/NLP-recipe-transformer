@@ -1,6 +1,8 @@
 import re
 import spacy
 
+from fuzzywuzzy import fuzz
+
 nlp = spacy.load('en_core_web_sm')
 
 test_ingredients = ['18 medium taco shells','2 pounds lean ground beef','1 (14 ounce) bottle ketchup','1 (8 ounce) package shredded Cheese','1 large tomato, diced','1 cup iceberg lettuce, shredded', '3 1/4 cups fusilli pasta','2 tablespoons butter','2 tablespoons all-purpose flour','2 cups milk','1 1/2 cups shredded Cheddar cheese, divided','3 teaspoons lemon juice','1/2 teaspoon mustard powder',' salt and ground black pepper to taste','15 ounces tuna packed in water, drained and flaked','1/4 cup dry bread crumbs']
@@ -13,12 +15,12 @@ directions1 = ['Preheat oven to 375 degrees F (190 degrees C).',
 
 def find_nouns(doc):
     nouns = []
-    for tok in [tok for tok in doc if tok.dep_ == 'compound']: # Get list of compounds in doc
+    for tok in [tok for tok in doc if tok.dep_ == 'compound' and tok.pos_ != 'VERB']: # Get list of compounds in doc
         noun = doc[tok.i: tok.head.i + 1]
-        nouns.append(noun)
+        nouns.append(str(noun))
     for tok in doc:
-        if tok.pos_ == "NOUN":
-            nouns.append(tok)
+        if tok.pos_ == "NOUN" and len(tok.text) > 2:
+            nouns.append(str(tok))
     return nouns
 
 
@@ -104,10 +106,10 @@ def parse_ingredients(ingreds):
     return(parsed_ingreds)
 
 
-parsed = parse_ingredients(test_ingredients)
+# parsed = parse_ingredients(test_ingredients)
 
-for i in parsed:
-    i.show()
+# for i in parsed:
+#     i.show()
 
 class Main_step:
     def __init__(self):
@@ -139,30 +141,9 @@ class Sub_step:
         print('     time: ', self.time)
         print(' ')
 
-def parse_recipe(ingreds, directions):
-    INGREDS = parse_ingredients(ingreds)
-    ingred_list = sorted(set([i.item for i in INGREDS]), key=len)
+# INGREDS = parse_ingredients(ingreds)
 
-    def find_ingred(step):
-        wordoverlaps = [None] * len(step.split())
-        index = 0
-        for word in step.split():
-            num_overlap = [len(set([word]).intersection(set(i.split()))) for i in ingred_list]
-            if max(num_overlap) > 0:  #if we're able to match more than one word
-                wordoverlaps[index] = ingred_list[num_overlap.index(max(num_overlap))]  #grab the first (and thus shortest) award name that matches max(num_overlap) times
-            else:
-                wordoverlaps[index] = None
-            index += 1
-        ans = []
-        inds = []
-        for i in range(len(wordoverlaps)):
-            if wordoverlaps[i] != None:
-                ans.append(wordoverlaps[i])
-                inds.append(i)
-        return ans, inds
-
-    #at this point, assume ingredents have correct root compound nouns (fix later)
-
+def split_into_substeps(directions):
     split_steps = []
 
     for step in directions:
@@ -177,8 +158,53 @@ def parse_recipe(ingreds, directions):
 
         main.substeps = parsed_substeps
         split_steps.append(main)
+    return split_steps
 
-    for step in split_steps:
-        step.show()
 
-parse_recipe(ingred1, directions1)
+def compute_ingredient_name_mappings(ingredient_objs, steps):
+    ingredient_nouns = sorted(set([i.item for i in ingredient_objs]), key=len)
+    nouns = []
+    for step in steps:
+        for ss in step.substeps:
+            doc = nlp(ss.source)
+            nouns += find_nouns(doc)
+
+    sorted_nouns = sorted(set(nouns), key=len, reverse=True)
+
+    mappings = []
+    for noun in sorted_nouns:
+        for i in ingredient_nouns:
+            if fuzz.partial_ratio(noun, i) > 90 and len(noun) <= len(i):
+                mappings.append((noun, i))
+    return mappings
+
+def parse_recipe(ingreds, directions):
+
+    # def find_ingred(step):
+    #     wordoverlaps = [None] * len(step.split())
+    #     index = 0
+    #     for word in step.split():
+    #         num_overlap = [len(set([word]).intersection(set(i.split()))) for i in ingredient_nouns]
+    #         if max(num_overlap) > 0:  #if we're able to match more than one word
+    #             wordoverlaps[index] = ingredient_nouns[num_overlap.index(max(num_overlap))]  #grab the first (and thus shortest) award name that matches max(num_overlap) times
+    #         else:
+    #             wordoverlaps[index] = None
+    #         index += 1
+    #     ans = []
+    #     inds = []
+    #     for i in range(len(wordoverlaps)):
+    #         if wordoverlaps[i] != None:
+    #             ans.append(wordoverlaps[i])
+    #             inds.append(i)
+    #     return ans, inds
+
+    #at this point, assume ingredents have correct root compound nouns (fix later)
+
+
+    split_steps = split_into_substeps(directions)
+
+
+
+
+
+    print(compute_ingredient_name_mappings(ingredient_nouns, split_steps))

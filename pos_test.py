@@ -19,8 +19,7 @@ directions2 = ['Preheat the oven to 350 degrees F (175 degrees C). ',
 
 # doc = nlp(directions1[3].split('.')[-3])
 
-doc = nlp("Cook fusilli in the boiling water, stirring occasionally, until tender yet firm to the bite, about 12 minutes.")
-
+doc = nlp(" shredded cheddar cheese ")
 def pwords(doc):
     for token in doc:
         print(token.text, token.pos_, token.dep_)
@@ -52,4 +51,4 @@ pwords(doc)
 #
 # doc = nlp(s)
 
-# displacy.serve(doc, style='dep')
+displacy.serve(doc, style='dep')

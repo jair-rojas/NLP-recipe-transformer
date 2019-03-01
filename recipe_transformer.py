@@ -1,7 +1,8 @@
-from human_readable import human_readable
-import parsers
+import human_readable
+import parsers2
 import fetch_page
-
+from pprint import pprint
+import transforming
 
 ingred2 = ['3 1/4 cups fusilli pasta','2 tablespoons butter','2 tablespoons all-purpose flour','2 cups milk','1 1/2 cups shredded Cheddar cheese, divided','3 teaspoons lemon juice','1/2 teaspoon mustard powder',' salt and ground black pepper to taste','15 ounces tuna packed in water, drained and flaked','1/4 cup dry bread crumbs']
 directions2 = ['Preheat the oven to 350 degrees F (175 degrees C). ',
@@ -23,11 +24,13 @@ directions1 = ['Preheat oven to 375 degrees F (190 degrees C).',
 
  #  API hookup -> recipe['ingredients'], recipe['directions']
 
-ingredients, directions = parsers.parse_recipe(ingred1, directions1)
+ingredients = parsers2.parse_ingredients(ingred1)
+steps = parsers2.split_into_substeps(directions1)
 
-for i in ingredients:
-    i.i_print()
-    print(' ')
+mappings = parsers2.compute_ingredient_name_mappings(ingredients, steps)
 
-for step in directions:
-    step.print()
+ingredients, steps = transforming.sub(mappings, ingredients, steps)
+
+ingredient_strs, step_strs = human_readable.reassemble(ingredients, steps)
+
+human_readable.human_readable(ingredient_strs, step_strs)
