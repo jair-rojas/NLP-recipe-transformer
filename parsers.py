@@ -356,10 +356,10 @@ class Parsed_Recipe:
         self.ingredients = parse_ingred(ingred_string)
         self.recipe = parse_recipe(recipe_string)
 
-# directions = parse_recipe(ingred2, directions2)
-#
-# # for i in ingredients:
-# #     i.i_print()
-#
-# for s in directions:
-#     s.print()
+directions = parse_recipe(ingred2, directions2)
+
+# for i in ingredients:
+#     i.i_print()
+
+for s in directions:
+    s.print()

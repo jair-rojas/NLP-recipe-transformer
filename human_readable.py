@@ -3,13 +3,21 @@ arr2 = [ "Preheat oven to 350 degrees F (175 degrees C). Line 2 baking sheets wi
 		 "Spread Cheddar cheese into four 6-inch circles, placed 2 inches apart.",
 		 "Bake in the preheated oven until cheese melts and is lightly brown, 6 to 8 minutes."]
 
-from parsers import *
+from parsers2 import *
 
 def reassemble(ingredients, steps):
 	ingredient_strs = []
 
 	for i in ingredients:
-		ingredient_strs.append(str(i.qty) + ' ' + i.qty_details + ' ' + i.unit + ' ' + i.item)
+		i_str = str(i.qty) + ' '
+
+		if i.qty_details:
+			i_str +=  '('+ i.qty_details + ') '
+
+		if i.unit:
+			i_str += i.unit + ' '
+		i_str += i.item
+		ingredient_strs.append(i_str)
 
 	step_strs = []
 

@@ -11,7 +11,7 @@ directions2 = ['Preheat the oven to 350 degrees F (175 degrees C). ',
            'Drain fusilli and fold into the sauce. Mix in tuna. Pour mixture into an 8-inch casserole dish and sprinkle with breadcrumbs. Top with remaining Cheddar cheese. ',
            'Bake in the preheated oven until cheese is melted and golden, about 30 minutes.' ]
 
-ingred1 = ['18 medium taco shells','2 pounds lean ground beef','1 (14 ounce) bottle ketchup','1 (8 ounce) package shredded Cheese','1 large tomato, diced','1 cup iceberg lettuce, shredded']
+ingred1 = ['18 medium taco shells','2 pounds lean ground beef','1 (14 ounce) bottle ketchup','1 (8 ounce) package shredded Cheddar cheese','1 large tomato, diced','1 cup iceberg lettuce, shredded']
 directions1 = ['Preheat oven to 375 degrees F (190 degrees C).',
           'Warm taco shells for 5 minutes on the center rack in the preheated oven.',
           'In a medium skillet over medium high heat, brown the beef. Halfway through browning, pour in ketchup. Stir well and let simmer for 5 minutes.',
@@ -31,7 +31,7 @@ steps = parsers2.split_into_substeps(directions1)
 
 mappings = parsers2.compute_ingredient_name_mappings(ingredients, steps)
 
-ingredients, steps = transforming.sub(mappings, ingredients, steps)
+ingredients, steps = transforming.transform_ingredients(mappings, ingredients, steps, 'vegetarian')
 
 ingredient_strs, step_strs = human_readable.reassemble(ingredients, steps)
 

@@ -42,7 +42,7 @@ class Ingredient:
         print(' ')
         print('--------------------------------')
 
-UNITWORDS = set(['can','jar','pound','ounce','cup','packet','bottle','pinch','teaspoon','tablespoon'])
+UNITWORDS = set(['can','jar','pound','ounce','cup','packet', 'package', 'bottle','pinch','teaspoon','tablespoon'])
 
 def cut_s(string):
     s = string
@@ -178,33 +178,33 @@ def compute_ingredient_name_mappings(ingredient_objs, steps):
                 mappings.append((noun, i))
     return mappings
 
-def parse_recipe(ingreds, directions):
-
-    # def find_ingred(step):
-    #     wordoverlaps = [None] * len(step.split())
-    #     index = 0
-    #     for word in step.split():
-    #         num_overlap = [len(set([word]).intersection(set(i.split()))) for i in ingredient_nouns]
-    #         if max(num_overlap) > 0:  #if we're able to match more than one word
-    #             wordoverlaps[index] = ingredient_nouns[num_overlap.index(max(num_overlap))]  #grab the first (and thus shortest) award name that matches max(num_overlap) times
-    #         else:
-    #             wordoverlaps[index] = None
-    #         index += 1
-    #     ans = []
-    #     inds = []
-    #     for i in range(len(wordoverlaps)):
-    #         if wordoverlaps[i] != None:
-    #             ans.append(wordoverlaps[i])
-    #             inds.append(i)
-    #     return ans, inds
-
-    #at this point, assume ingredents have correct root compound nouns (fix later)
-
-
-    split_steps = split_into_substeps(directions)
-
-
-
-
-
-    print(compute_ingredient_name_mappings(ingredient_nouns, split_steps))
+# def parse_recipe(ingreds, directions):
+#
+#     # def find_ingred(step):
+#     #     wordoverlaps = [None] * len(step.split())
+#     #     index = 0
+#     #     for word in step.split():
+#     #         num_overlap = [len(set([word]).intersection(set(i.split()))) for i in ingredient_nouns]
+#     #         if max(num_overlap) > 0:  #if we're able to match more than one word
+#     #             wordoverlaps[index] = ingredient_nouns[num_overlap.index(max(num_overlap))]  #grab the first (and thus shortest) award name that matches max(num_overlap) times
+#     #         else:
+#     #             wordoverlaps[index] = None
+#     #         index += 1
+#     #     ans = []
+#     #     inds = []
+#     #     for i in range(len(wordoverlaps)):
+#     #         if wordoverlaps[i] != None:
+#     #             ans.append(wordoverlaps[i])
+#     #             inds.append(i)
+#     #     return ans, inds
+#
+#     #at this point, assume ingredents have correct root compound nouns (fix later)
+#
+#
+#     split_steps = split_into_substeps(directions)
+#
+#
+#
+#
+#
+#     print(compute_ingredient_name_mappings(ingredient_nouns, split_steps))
