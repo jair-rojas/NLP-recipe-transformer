@@ -1,5 +1,5 @@
 arr1 = [ "2 cups shredded Cheddar cheese", "1 pound ground beef", "1/2 package taco seasoning mix"]
-arr2 = [ "Preheat oven to 350 degrees F (175 degrees C). Line 2 baking sheets with parchment paper or silicone mat.", 
+arr2 = [ "Preheat oven to 350 degrees F (175 degrees C). Line 2 baking sheets with parchment paper or silicone mat.",
 		 "Spread Cheddar cheese into four 6-inch circles, placed 2 inches apart.",
 		 "Bake in the preheated oven until cheese melts and is lightly brown, 6 to 8 minutes."]
 
@@ -23,4 +23,4 @@ def human_readable(ingr, dire):
 		step += 1
 	print(''.join(str2))
 
-human_readable(arr1, arr2)
+# human_readable(arr1, arr2)
