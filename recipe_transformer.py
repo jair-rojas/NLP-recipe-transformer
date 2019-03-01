@@ -24,6 +24,8 @@ directions1 = ['Preheat oven to 375 degrees F (190 degrees C).',
 
  #  API hookup -> recipe['ingredients'], recipe['directions']
 
+
+
 ingredients = parsers2.parse_ingredients(ingred1)
 steps = parsers2.split_into_substeps(directions1)
 
@@ -33,4 +35,11 @@ ingredients, steps = transforming.sub(mappings, ingredients, steps)
 
 ingredient_strs, step_strs = human_readable.reassemble(ingredients, steps)
 
+print("-----------------------------------")
+
+ #print original form
+human_readable.human_readable(ingred1, directions1)
+
+print("V V V V V V V V V V V V V V V V V V V V V V V V V V V V V V V V V V\n")
+#print final form
 human_readable.human_readable(ingredient_strs, step_strs)
