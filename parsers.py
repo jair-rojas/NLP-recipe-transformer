@@ -342,7 +342,7 @@ def parse_recipe(ingreds, directions):
     # print(tools)
     # print(time)
     # print(verbs)
-    # print(methodopts)
+    print(methodopts)
 
     steps = []
     for i in range(len(splits2)):
