@@ -9,6 +9,8 @@ VEGETARIAN = [
     ('cheddar cheese', 'synthetic margarine', 'margarine', [], [])
 ]
 
+HELLS KITCHEN = [ 'aggressively', 'combatatively', ]
+
 def show_mappings(mappings):
     for m in mappings:
         print(m[0], '--->', m[1])
@@ -58,3 +60,7 @@ def sub(mappings, ingredients, steps, templates):
 def transform_ingredients(mappings, ingredients, steps, style):
     if style == 'vegetarian':
         return sub(mappings, ingredients, steps, VEGETARIAN)
+    if style == 'healthy':
+        pass
+    if style == 'to_chinese':
+        pass

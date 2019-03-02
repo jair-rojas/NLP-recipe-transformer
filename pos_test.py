@@ -19,36 +19,45 @@ directions2 = ['Preheat the oven to 350 degrees F (175 degrees C). ',
 
 # doc = nlp(directions1[3].split('.')[-3])
 
-doc = nlp(" shredded cheddar cheese ")
-def pwords(doc):
-    for token in doc:
-        print(token.text, token.pos_, token.dep_)
-def pchunk(doc):
-    for chunk in doc.noun_chunks:
-        print(chunk.text, chunk.root.text, chunk.root.dep_,
-              chunk.root.head.text)
-def pdep(doc):
-    for token in doc:
-        print(token.text, token.dep_, token.head.text, token.head.pos_, token.pos_,
-          [child for child in token.children])
+# doc = nlp(" shredded cheddar cheese ")
+# def pwords(doc):
+#     for token in doc:
+#         print(token.text, token.pos_, token.dep_)
+# def pchunk(doc):
+#     for chunk in doc.noun_chunks:
+#         print(chunk.text, chunk.root.text, chunk.root.dep_,
+#               chunk.root.head.text)
+# def pdep(doc):
+#     for token in doc:
+#         print(token.text, token.dep_, token.head.text, token.head.pos_, token.pos_,
+#           [child for child in token.children])
 
-def find_nouns(doc):
-    nouns = []
-    for tok in [tok for tok in doc if tok.dep_ == 'compound']: # Get list of compounds in doc
-        noun = doc[tok.i: tok.head.i + 1]
-        nouns.append(noun)
-    for tok in doc:
-        if tok.pos_ == "NOUN":
-            nouns.append(tok)
-    return nouns
-
-print(find_nouns(doc))
-pwords(doc)
-
-# s = ''
-# for i in directions2:
-#     s += i + '\n '
+# def find_nouns(doc):
+#     nouns = []
+#     for tok in [tok for tok in doc if tok.dep_ == 'compound']: # Get list of compounds in doc
+#         noun = doc[tok.i: tok.head.i + 1]
+#         nouns.append(noun)
+#     for tok in doc:
+#         if tok.pos_ == "NOUN":
+#             nouns.append(tok)
+#     return nouns
 #
-# doc = nlp(s)
+# print(find_nouns(doc))
+# pwords(doc)
+
+s = ''
+for i in directions2:
+    s += i + '\n '
+
+doc = nlp(s)
+
+def find_adverbs(doc):
+    adverbs = []
+    for tok in doc:
+        if tok.pos_ == "ADV" and tok.head.pos_ == "VERB":
+            adverbs.append(tok.text)
+    print(adverbs)
+
+find_adverbs(doc)
 
 displacy.serve(doc, style='dep')
