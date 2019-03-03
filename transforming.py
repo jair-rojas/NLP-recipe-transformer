@@ -1,6 +1,7 @@
 from parsers2 import *
+import random
 
-ALWAYS_REPLACE_THESE = [ 'meat', 'fish' ]
+ALWAYS_REPLACE_THESE_VEGETARIAN = [ 'meat', 'fish' ]
 
 #Template key --> (item_to_remove, item_to_replace_with(long version), item_to_replace_with(short version), [prep_steps], [finshing_steps])
 
@@ -9,7 +10,13 @@ VEGETARIAN = [
     ('cheddar cheese', 'synthetic margarine', 'margarine', [], [])
 ]
 
-HELLS KITCHEN = [ 'aggressively', 'combatatively', ]
+HEALTHY = [
+    ('vegetable oil', 'olive oil', 'olive oil', [], []),
+    ('canola oil', 'olive oil', 'olive oil', [], []),
+    ('butter', 'unsalted butter', 'butter', [], [])
+]
+
+IN_A_RUSH = [ 'aggressively', 'hastily', 'belligerently' ]
 
 def show_mappings(mappings):
     for m in mappings:
@@ -57,10 +64,25 @@ def sub(mappings, ingredients, steps, templates):
         i.show()
     return ingredients, steps
 
+def replace_adverbs(INGREDIENTS, steps, replacements=IN_A_RUSH):
+    for step in steps:
+        for ss in step.substeps:
+            doc = nlp(ss.source)
+            ss.source = ''
+            for tok in doc:
+                if tok.pos_ == "ADV" and tok.head.pos_ == "VERB":
+                    # tok.text = replacements[random.randint(0,len(replacements)-1)]
+                    ss.source += replacements[random.randint(0,len(replacements)-1)] + tok.whitespace_
+                else:
+                    ss.source += tok.text + tok.whitespace_
+    return INGREDIENTS, steps
+
 def transform_ingredients(mappings, ingredients, steps, style):
     if style == 'vegetarian':
         return sub(mappings, ingredients, steps, VEGETARIAN)
     if style == 'healthy':
+        return sub(mappings, ingredients, steps, HEALTHY)
+    if style == 'to_korean':
         pass
-    if style == 'to_chinese':
-        pass
+    if style == 'in_a_rush':
+        return replace_adverbs(ingredients, steps, IN_A_RUSH)

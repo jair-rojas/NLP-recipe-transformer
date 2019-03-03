@@ -26,12 +26,12 @@ directions1 = ['Preheat oven to 375 degrees F (190 degrees C).',
 
 
 
-ingredients = parsers2.parse_ingredients(ingred1)
-steps = parsers2.split_into_substeps(directions1)
+ingredients = parsers2.parse_ingredients(ingred2)
+steps = parsers2.split_into_substeps(directions2)
 
 mappings = parsers2.compute_ingredient_name_mappings(ingredients, steps)
 
-ingredients, steps = transforming.transform_ingredients(mappings, ingredients, steps, 'vegetarian')
+ingredients, steps = transforming.transform_ingredients(mappings, ingredients, steps, 'in_a_rush')
 
 ingredient_strs, step_strs = human_readable.reassemble(ingredients, steps)
 
