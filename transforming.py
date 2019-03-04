@@ -6,7 +6,7 @@ ALWAYS_REPLACE_THESE_VEGETARIAN = [ 'meat', 'fish' ]
 #Template key --> (item_to_remove, item_to_replace_with(long version), item_to_replace_with(short version), [prep_steps], [finshing_steps])
 
 VEGETARIAN = [
-    ('ground beef', 'tofu bricks', 'tofu', ['Place tofu bricks between two plates for 30 minutes until drained, then mash into a fine crumble', 'Profit???'], ['Serve on a recycled paper plate']),
+    ('ground beef', 'tofu bricks', 'tofu', ['Place tofu bricks between two plates for 30 minutes until drained, then mash into a fine crumble', 'second prep step'], ['finishing step']),
     ('cheddar cheese', 'synthetic margarine', 'margarine', [], [])
 ]
 
