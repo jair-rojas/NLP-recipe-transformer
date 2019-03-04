@@ -1,9 +1,9 @@
 from parsers2 import *
 from transforming import *
-
+import random
 
 #new--------------------------------------------------
-HERBS = ['oregano','basil','parsley','dill','scallion','green onion','chili','cumin','paprika']
+HERBS = ['oregano','basil','parsley','dill','scallion','green onion','cumin','paprika','mint']
 
 def check_matches(steps,replacement):
     for s in steps:
@@ -44,13 +44,14 @@ def check_matches(steps,replacement):
     return(steps)
 
 KOREAN = [
-    ('sauce','gochu-jang','gochu-jang',[],[]),
+    [('sauce','gochu-jang','gochu-jang',[],[]),('sauce','soy sauce','soy sauce',[],[])],
     (HERBS, 'scallion','scallion',[],[]),
     ('ham','spam','spam',[],[]),
     ('wine','rice wine','rice wine',[],[]),
 ]
 def koreanize(mappings, ingredients, steps):
-    sauce = KOREAN[0]
+    rand = random.randint(1,2)
+    sauce = KOREAN[0][rand-1]
     #find the sauces
     transform = 0
     ingred_sauces = []
@@ -64,7 +65,7 @@ def koreanize(mappings, ingredients, steps):
                         steps = swap_ingredient(sauce[2], m[0], steps) #swap short names in directions
     for i in ingred_sauces:
         ingredients.remove(i)
-    ingredients.append(Ingredient(1,'jar','gochu-jang',))
+    ingredients.append(Ingredient(1,'bottle',sauce[1],))
             
     #herbs
     scallion = KOREAN[1]
