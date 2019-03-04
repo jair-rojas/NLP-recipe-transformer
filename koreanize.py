@@ -47,13 +47,49 @@ KOREAN = [
     [('sauce','gochu-jang','gochu-jang',[],[]),('sauce','soy sauce','soy sauce',[],[])],
     (HERBS, 'scallion and ginger','scallion and ginger',['Slice ginger as thinly as possible. Wash scallions and remove stems. Discard outer layer'],['Sprinkle gochu-garu on top for extra spice']),
     ('bacon','spam','spam',[],[]),
-    ('wine','rice wine','rice wine',[],[]),
+    ('wine','rice wine','wine',[],[]),
     ('olive oil','vegetable oil','oil',[],[])
 ]
 def koreanize(mappings, ingredients, steps):
+    garlic = 0
+    chicken = 0
+    beef = 0
+    pork = 0
+    marinate = 0
+    for s in steps:
+        for ss in s.substeps:
+            if re.search('marinade', ss.source):
+                marinate = 1
+            if re.search('marinate', ss.source):
+                marinate = 1
+                
+    for ingred in ingredients:
+        if re.search('garlic', ingred.item):
+            garlic = 1
+        if re.search('chicken', ingred.item):
+            chicken  = 1
+        if re.search('beef', ingred.item):
+            beef = 1
+        if re.search('pork', ingred.item):
+            pork = 1
+    
+    if garlic == 0:
+        steps = add_prep_steps(steps, ['Grill garlic on stove to serve on the side'])
+    
+    if marinate == 0:
+        if chicken == 1:
+            steps = add_prep_steps(steps, ['Create marinade by mixing soy sauce, soybean paste, and sesame oil','Marinate chicken in mixture for at least an hour (or overnight)'])
+        if beef == 1:
+            steps = add_prep_steps(steps, ['Create marinade by mixing soy sauce, soybean paste, and sesame oil','Marinate beef in mixture for at least an hour (or overnight)'])
+        if pork == 1:
+            steps = add_prep_steps(steps, ['Create marinade by mixing soy sauce, soybean paste, and sesame oil','Marinate pork in mixture for at least an hour (or overnight)'])
+        ingredients.append(Ingredient(.5,'cup','soy sauce'))
+        ingredients.append(Ingredient(2,'teaspoons','korean soybean paste'))
+        ingredients.append(Ingredient(.5,'cup','sesame sauce'))
+        
     rand = random.randint(1,2)
     sauce = KOREAN[0][rand-1]
-    #find the sauces
+    #find the sauces    
     transform = 0
     ingred_sauces = []
     for i in ingredients:

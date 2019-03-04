@@ -83,7 +83,9 @@ def parse_ingredients(ingreds):
             else:
                 num = int(num)
             qty = qty + num
-
+        if qty == 0:
+            qty = 'some'
+    
         line = re.sub('[0-9]+\s*[^A-Za-z]*', '', line)
 
         # look for unit words
