@@ -24,13 +24,13 @@ def check_matches(steps,replacement):
                         if word.lower() == 'match,': 
                             if indicator == 0:
                                 indicator = 1
-                                string[idx] = 'scallion,'
+                                string[idx] = replacement+','
                             else:
                                 string[idx] = ''
                         if word.lower() == 'match': 
                             if indicator == 0:
                                 indicator = 1
-                                string[idx] = 'scallion'
+                                string[idx] = replacement
                             else:
                                 string[idx] = ''
                     string = [x for x in string if x != '']
@@ -45,9 +45,10 @@ def check_matches(steps,replacement):
 
 KOREAN = [
     [('sauce','gochu-jang','gochu-jang',[],[]),('sauce','soy sauce','soy sauce',[],[])],
-    (HERBS, 'scallion','scallion',[],[]),
-    ('ham','spam','spam',[],[]),
+    (HERBS, 'scallion and ginger','scallion and ginger',['Slice ginger as thinly as possible. Wash scallions and remove stems. Discard outer layer'],['Sprinkle gochu-garu on top for extra spice']),
+    ('bacon','spam','spam',[],[]),
     ('wine','rice wine','rice wine',[],[]),
+    ('olive oil','vegetable oil','oil',[],[])
 ]
 def koreanize(mappings, ingredients, steps):
     rand = random.randint(1,2)
@@ -65,7 +66,8 @@ def koreanize(mappings, ingredients, steps):
                         steps = swap_ingredient(sauce[2], m[0], steps) #swap short names in directions
     for i in ingred_sauces:
         ingredients.remove(i)
-    ingredients.append(Ingredient(1,'bottle',sauce[1],))
+    if transform == 1:
+        ingredients.append(Ingredient(1,'bottle',sauce[1],))
             
     #herbs
     scallion = KOREAN[1]
@@ -81,12 +83,15 @@ def koreanize(mappings, ingredients, steps):
                     if fuzz.partial_ratio(j, m[1].lower()) > 90:  #matches long name in mappings
                         print(m[1],m[0])
                         steps = swap_ingredient('match', m[0], steps) #swap short names in directions
-    steps = check_matches(steps,'scallion')
+    steps = check_matches(steps,'scallion and ginger')
+    steps = add_prep_steps(steps, scallion[3])
+    steps = add_finishing_steps(steps, scallion[4])
     for i in herbs:
         ingredients.remove(i)
     if scal_ind == 1:
-        print('scallion')
         ingredients.append(Ingredient(1,'bunch','scallions','finely chopped'))
+        ingredients.append(Ingredient(1,unit= '',item = 'ginger',comments= 'thinly sliced'))
+        ingredients.append(Ingredient(1,'teaspoon','gochu-garu'))
             
     
     #other stuff
@@ -104,9 +109,12 @@ def koreanize(mappings, ingredients, steps):
 
     #if no transformations so far
     if transform == 0: 
-        steps = add_finishing_steps(steps,'Serve with side of kimchi and dollop of gochujang.')
+        steps = add_finishing_steps(steps,['Serve with side of kimchi and assorted store-bought banchan.'])
         ingredients.append(Ingredient(1,'tub','kimchi'))
-        ingredients.append(Ingredient(1,'jar','gochujang'))
+        ingredients.append(Ingredient(1,'plate','banchan','assorted'))
+    else:
+        steps = add_finishing_steps(steps, ['Serve with side of assorted banchan'])
+        ingredients.append(Ingredient(1,'plate','banchan','assorted'))
 
     return(ingredients,steps)
 
