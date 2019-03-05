@@ -4,7 +4,7 @@ import random
 import re
 
 #new--------------------------------------------------
-HERBS = ['oregano','basil','parsley','dill','scallion','green onion','cumin','paprika','mint']
+HERBS = ['oregano','basil','parsley','dill','scallion','green onion','cumin','paprika','mint','ginger']
 
 def check_matches(steps,replacement):
     for s in steps:
@@ -62,6 +62,8 @@ def koreanize(mappings, ingredients, steps):
             if re.search('marinade', ss.source):
                 marinate = 1
             if re.search('marinate', ss.source):
+                marinate = 1
+            if re.search('brine', ss.source):
                 marinate = 1
                 
     for ingred in ingredients:
