@@ -84,7 +84,7 @@ def parse_ingredients(ingreds):
                 num = int(num)
             qty = qty + num
         if qty == 0:
-            qty = 'some'
+            qty = ''
 
         line = re.sub('[0-9]+\s*[^A-Za-z]*', '', line)
 
