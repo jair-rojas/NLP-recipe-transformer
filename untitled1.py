@@ -41,9 +41,9 @@ steps = parsers2.split_into_substeps(directions1)
 
 mappings = parsers2.compute_ingredient_name_mappings(ingredients, steps)
 
-#ingredients, steps = untitled0.koreanize(mappings, ingredients, steps)
+ingredients, steps = untitled0.koreanize(mappings, ingredients, steps)
 
-ingredients, steps = healthy.to_healthy(mappings, ingredients, steps)
+#ingredients, steps = healthy.to_healthy(mappings, ingredients, steps)
 steps = remove_dup(steps)
 
 ingredient_strs, step_strs = human_readable.reassemble(ingredients, steps)
