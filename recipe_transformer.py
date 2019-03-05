@@ -4,6 +4,33 @@ import fetch_page
 from pprint import pprint
 import transforming
 
+# removes any words if they appear twice in a row in a step
+# we should try to use this at the very end
+# takes in all the steps and spits out all the steps removing duplicates
+def remove_dup(steps):
+    def remove_comma(string):
+        return(re.sub(',', '', string))
+    
+    for s in steps:
+        for ss in s.substeps:
+            split = ss.source.split()
+            repeats = []
+            for i in range(len(split)):
+                word = split[i]
+                wordnext = ''
+                try:
+                    wordnext = split[i+1]
+                except: 
+                    pass
+                if word == wordnext:
+                    repeats.append(word)
+            for i in repeats:
+                split.remove(i)
+            ss.source = ' ' + ' '.join(split)
+    return(steps)
+
+
+
 ingred2 = ['3 1/4 cups fusilli pasta','2 tablespoons butter','2 tablespoons all-purpose flour','2 cups milk','1 1/2 cups shredded Cheddar cheese, divided','3 teaspoons lemon juice','1/2 teaspoon mustard powder',' salt and ground black pepper to taste','15 ounces tuna packed in water, drained and flaked','1/4 cup dry bread crumbs']
 directions2 = ['Preheat the oven to 350 degrees F (175 degrees C). ',
            'Bring a large pot of lightly salted water to a boil. Cook fusilli in the boiling water, stirring occasionally, until tender yet firm to the bite, about 12 minutes. ',

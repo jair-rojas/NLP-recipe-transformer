@@ -51,7 +51,7 @@ def cut_s(string):
 
 def str_to_frac(string):
     t = string.split('/')
-    return int(t[0])/int(t[1])
+    return round(int(t[0])/int(t[1]),2)
 
 
 

@@ -4,13 +4,14 @@ import re
 
 HEALTHY = [('white rice','quinoa','quinoa',[],[]),
            ('vegetable oil','olive oil','oil',[],[]),
-           ('butter','coconut oil','coconut oil',[],[]),
+           ('butter','coconut oil','oil',[],[]),
            ('sour cream','greek yogurt','yogurt',[],[]),
            ('flour','coconut flour','flour',[],[]),
            ('sugar','stevia','stevia',[],[]),
            #('salt','himalayan salt','himalayan salt',[],[]),
            ('butter','margarine','margarine',[],[]),
-           ('bacon','margarine','margarine',[],[]),
+           ('bacon', 'lean ham', 'ham',[],[]),
+           ('pork','lean chicken breast','chicken',[],[]),
            ('dressing', 'dressing','dressing',[],[])]
         
 
