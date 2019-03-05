@@ -5,9 +5,13 @@ ALWAYS_REPLACE_THESE_VEGETARIAN = [ 'meat', 'fish' ]
 
 #Template key --> (item_to_remove, item_to_replace_with(long version), item_to_replace_with(short version), [prep_steps], [finshing_steps])
 
-VEGETARIAN = [
+TO_VEGETARIAN = [
     ('ground beef', 'tofu bricks', 'tofu', ['Place tofu bricks between two plates for 30 minutes until drained, then mash into a fine crumble', 'second prep step'], ['finishing step']),
     ('cheddar cheese', 'synthetic margarine', 'margarine', [], [])
+]
+
+FROM_VEGETARIAN = [
+
 ]
 
 HEALTHY = [
@@ -16,7 +20,13 @@ HEALTHY = [
     ('butter', 'unsalted butter', 'butter', [], [])
 ]
 
-IN_A_RUSH = [ 'aggressively', 'hastily', 'belligerently' ]
+UNHEALTHY = [
+    ('olive oil', 'vegetable oil', 'vegetable oil', [], []),
+    ('butter', 'salted butter', 'butter', [], []),
+    ('salt and pepper', 'lots of salt and pepper', 'salt and pepper', [], [])
+]
+
+HELLS_KITCHEN = [ 'aggressively', 'hastily', 'belligerently' ]
 
 def show_mappings(mappings):
     for m in mappings:
@@ -64,7 +74,7 @@ def sub(mappings, ingredients, steps, templates):
         i.show()
     return ingredients, steps
 
-def replace_adverbs(INGREDIENTS, steps, replacements=IN_A_RUSH):
+def replace_adverbs(INGREDIENTS, steps, replacements=HELLS_KITCHEN):
     for step in steps:
         for ss in step.substeps:
             doc = nlp(ss.source)
@@ -77,12 +87,54 @@ def replace_adverbs(INGREDIENTS, steps, replacements=IN_A_RUSH):
                     ss.source += tok.text + tok.whitespace_
     return INGREDIENTS, steps
 
+def pwords(doc):
+    for token in doc:
+        print(token.text, token.pos_, token.dep_)
+
+def remove_descriptors(ingredient):
+    doc = nlp(ingredient.item)
+    base_ingredient = ''
+    found_start = False
+    print("---------------------------")
+    print(ingredient.item)
+    pwords(doc)
+    for tok in doc:
+        if tok.pos_ == 'NOUN' or tok.pos_ == 'PROPN':
+            base_ingredient += tok.text + tok.whitespace_
+            found_start = True
+        elif tok.text.lower() == 'and' and found_start == True:
+            base_ingredient += tok.text + tok.whitespace_
+        elif tok.pos_ == 'PUNCT':
+            base_ingredient += tok.whitespace_
+        elif found_start == True:
+            break
+    ingredient.item = base_ingredient
+    print(base_ingredient)
+    return ingredient
+
+def to_easy(mappings, ingredients, steps):
+    ingredients = [remove_descriptors(i) for i in ingredients]
+    # for i in ingredients:
+    #     i.show()
+    return ingredients, steps
+
 def transform_ingredients(mappings, ingredients, steps, style):
-    if style == 'vegetarian':
-        return sub(mappings, ingredients, steps, VEGETARIAN)
+    if style == 'to_vegetarian':
+        return sub(mappings, ingredients, steps, TO_VEGETARIAN)
+    if style == 'from_vegetarian':
+        return sub(mappings, ingredients, steps, FROM_VEGETARIAN)
+
     if style == 'healthy':
         return sub(mappings, ingredients, steps, HEALTHY)
+    if style == 'unhealthy':
+        return sub(mappings, ingredients, steps, UNHEALTHY)
+
+    if style == 'to_easy':
+        return to_easy(mappings, ingredients, steps)
+
     if style == 'to_korean':
         pass
-    if style == 'in_a_rush':
-        return replace_adverbs(ingredients, steps, IN_A_RUSH)
+    if style == 'hells kitchen':
+        return replace_adverbs(ingredients, steps, HELLS_KITCHEN)
+
+    print("No transform specified")

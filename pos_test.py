@@ -19,10 +19,10 @@ directions2 = ['Preheat the oven to 350 degrees F (175 degrees C). ',
 
 # doc = nlp(directions1[3].split('.')[-3])
 
-# doc = nlp(" shredded cheddar cheese ")
-# def pwords(doc):
-#     for token in doc:
-#         print(token.text, token.pos_, token.dep_)
+# doc = nlp("4 skinless, boneless chicken breast halves")
+def pwords(doc):
+    for token in doc:
+        print(token.text, token.pos_, token.dep_)
 # def pchunk(doc):
 #     for chunk in doc.noun_chunks:
 #         print(chunk.text, chunk.root.text, chunk.root.dep_,
@@ -45,19 +45,40 @@ directions2 = ['Preheat the oven to 350 degrees F (175 degrees C). ',
 # print(find_nouns(doc))
 # pwords(doc)
 
-s = ''
-for i in directions2:
-    s += i + '\n '
+doc = nlp("sliced fresh mushrooms. ")#1 1/2 cups shredded Cheddar cheese, divided. iceberg lettuce, shredded. 15 ounces tuna packed in water, drained and flaked ")
+# doc = nlp("2 skinless, boneless chicken breast halves")
 
-doc = nlp(s)
+# s = ''
+# for i in directions2:
+#     s += i + '\n '
+#
+# doc = nlp(s)
 
-def find_adverbs(doc):
-    adverbs = []
+def remove_descriptors(ingredient):
+    doc = nlp(ingredient)
+    base_ingredient = ''
+    found_start = False
+    print("---------------------------")
+    pwords(doc)
     for tok in doc:
-        if tok.pos_ == "ADV" and tok.head.pos_ == "VERB":
-            adverbs.append(tok.text)
-    print(adverbs)
+        if tok.pos_ == 'NOUN' or tok.pos_ == 'PROPN' or tok.pos_ == 'PUNCT':
+            print(tok.text)
+            base_ingredient += tok.text + tok.whitespace_
+            found_start = True
+        elif found_start == True:
+            print(tok.text)
+            print(base_ingredient)
+            return ingredient
 
-find_adverbs(doc)
+remove_descriptors("sliced fresh mushrooms. ")
+
+# def find_adverbs(doc):
+#     adverbs = []
+#     for tok in doc:
+#         if tok.pos_ == "ADV" and tok.head.pos_ == "VERB":
+#             adverbs.append(tok.text)
+#     print(adverbs)
+#
+# find_adverbs(doc)
 
 displacy.serve(doc, style='dep')

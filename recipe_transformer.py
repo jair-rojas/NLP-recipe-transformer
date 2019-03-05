@@ -18,27 +18,34 @@ directions1 = ['Preheat oven to 375 degrees F (190 degrees C).',
           'Spoon the meat mixture into the warm taco shells and top with Cheddar cheese. Return the filled taco shells to the preheated oven and bake until cheese is melted. Top each taco with a little tomato and lettuce.']
 
 
-# sample_recipe_url = "https://www.allrecipes.com/recipe/22849/beef-tacos/?internalSource=hub%20recipe&referringContentType=Search&clickId=cardslot%202"
-#
-# recipe = fetch_page.get_ingredients_and_directions(sample_recipe_url)
+recipe_url = "https://www.allrecipes.com/recipe/22849/beef-tacos/?internalSource=hub%20recipe&referringContentType=Search&clickId=cardslot%202"  #beef tacos
+recipe_url = "https://www.allrecipes.com/recipe/223042/chicken-parmesan/?internalSource=hub%20recipe&referringContentType=Search"  #chicken parm
+
+# recipe_url = input("Please provide a recipe url from AllRecipes.com:")
+
+recipe = fetch_page.get_ingredients_and_directions(recipe_url)
 
  #  API hookup -> recipe['ingredients'], recipe['directions']
 
+# recipe = {}
+# recipe['ingredients'] = ingred1
+# recipe['directions'] = directions1
 
 
-ingredients = parsers2.parse_ingredients(ingred1)
-steps = parsers2.split_into_substeps(directions1)
+
+ingredients = parsers2.parse_ingredients(recipe['ingredients'])
+steps = parsers2.split_into_substeps(recipe['directions'])
 
 mappings = parsers2.compute_ingredient_name_mappings(ingredients, steps)
 
-ingredients, steps = transforming.transform_ingredients(mappings, ingredients, steps, 'vegetarian')
+ingredients, steps = transforming.transform_ingredients(mappings, ingredients, steps, 'to_easy')
 
 ingredient_strs, step_strs = human_readable.reassemble(ingredients, steps)
 
 print("-----------------------------------")
 
  #print original form
-human_readable.human_readable(ingred1, directions1)
+human_readable.human_readable(recipe['ingredients'], recipe['directions'])
 
 print("V V V V V V V V V V V V V V V V V V V V V V V V V V V V V V V V V V\n")
 #print final form

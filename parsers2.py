@@ -93,15 +93,16 @@ def parse_ingredients(ingreds):
             unit = line.split()[0]
             line = ' '.join(line.split()[1:])
 
-        # split string on ',' for item and comment
-        if re.search('to taste', line):
-            line = re.sub('to taste', ' ', line)
-            comments += 'to taste'
-        line = line.split(',')
-        item = line[0]
-        try:
-            comments += line[1]
-        except: pass
+        item = line
+        # # split string on ',' for item and comment
+        # if re.search('to taste', line):
+        #     line = re.sub('to taste', ' ', line)
+        #     comments += 'to taste'
+        # line = line.split(',')
+        # item = line[0]
+        # try:
+        #     comments += line[1]
+        # except: pass
 
         parsed_ingreds.append(Ingredient(qty,unit,item,comments,qty_details))
 
