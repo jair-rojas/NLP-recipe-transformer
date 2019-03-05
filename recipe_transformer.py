@@ -19,7 +19,7 @@ directions1 = ['Preheat oven to 375 degrees F (190 degrees C).',
 
 
 recipe_url = "https://www.allrecipes.com/recipe/22849/beef-tacos/?internalSource=hub%20recipe&referringContentType=Search&clickId=cardslot%202"  #beef tacos
-recipe_url = "https://www.allrecipes.com/recipe/223042/chicken-parmesan/?internalSource=hub%20recipe&referringContentType=Search"  #chicken parm
+# recipe_url = "https://www.allrecipes.com/recipe/223042/chicken-parmesan/?internalSource=hub%20recipe&referringContentType=Search"  #chicken parm
 
 # recipe_url = input("Please provide a recipe url from AllRecipes.com:")
 
@@ -38,7 +38,7 @@ steps = parsers2.split_into_substeps(recipe['directions'])
 
 mappings = parsers2.compute_ingredient_name_mappings(ingredients, steps)
 
-ingredients, steps = transforming.transform_ingredients(mappings, ingredients, steps, 'to_easy')
+ingredients, steps = transforming.transform_ingredients(mappings, ingredients, steps, 'to_very_easy')
 
 ingredient_strs, step_strs = human_readable.reassemble(ingredients, steps)
 

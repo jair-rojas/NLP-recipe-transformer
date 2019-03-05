@@ -13,7 +13,7 @@ HEALTHY = [('white rice','quinoa','quinoa',[],[]),
            ('bacon', 'lean ham', 'ham',[],[]),
            ('pork','lean chicken breast','chicken',[],[]),
            ('dressing', 'dressing','dressing',[],[])]
-        
+
 
 
 def to_healthy(mappings, ingredients, steps):
@@ -40,11 +40,12 @@ def to_healthy(mappings, ingredients, steps):
             if re.search('flour', ss.source):
                 ss.source = re.sub('flour','coconut flour', ss.source)
 
-    steps = add_finishing_steps(steps,['Serve with sliced avocado'])    
-    ingredients.append(Ingredient(1,'','avocado'))
-            
+    if avocado == 0:
+        steps = add_finishing_steps(steps,['Serve with sliced avocado'])
+        ingredients.append(Ingredient(1,'','avocado'))
+
     sauce = HEALTHY[-1]
-    #find the sauces    
+    #find the sauces
     transform = 0
     ingred_sauces = []
     for i in ingredients:
@@ -61,7 +62,7 @@ def to_healthy(mappings, ingredients, steps):
         ingredients.append(Ingredient(.5,'cup','balsamic vinegar'))
         ingredients.append(Ingredient(1,'sprig','parsley'))
         steps = add_prep_steps(steps, ['Prepare dressing by slowly mixing olive oil, balsamic vinegar, and parsley'])
-        
+
     for template in HEALTHY[:-1]:
         for i in ingredients:
             if fuzz.partial_ratio(template[0], i.item.lower()) > 90: #matches first word of template to an ingredient
@@ -73,14 +74,5 @@ def to_healthy(mappings, ingredients, steps):
                         steps = swap_ingredient(template[2], m[0], steps) #swap short names in directions
                 steps = add_prep_steps(steps, template[3])
                 steps = add_finishing_steps(steps, template[4])
-        
-    return(ingredients,steps)
-    
 
-                    
-                    
-                    
-                    
-                    
-                    
-                    
+    return(ingredients,steps)

@@ -95,27 +95,59 @@ def remove_descriptors(ingredient):
     doc = nlp(ingredient.item)
     base_ingredient = ''
     found_start = False
-    print("---------------------------")
-    print(ingredient.item)
-    pwords(doc)
+    # print("---------------------------")
+    # print(ingredient.item)
+    # pwords(doc)
     for tok in doc:
         if tok.pos_ == 'NOUN' or tok.pos_ == 'PROPN':
             base_ingredient += tok.text + tok.whitespace_
             found_start = True
         elif tok.text.lower() == 'and' and found_start == True:
             base_ingredient += tok.text + tok.whitespace_
-        elif tok.pos_ == 'PUNCT':
+            found_start = False
+        elif tok.pos_ == 'PUNCT' and found_start == True:
             base_ingredient += tok.whitespace_
         elif found_start == True:
             break
     ingredient.item = base_ingredient
-    print(base_ingredient)
+    # print(base_ingredient)
     return ingredient
 
 def to_easy(mappings, ingredients, steps):
     ingredients = [remove_descriptors(i) for i in ingredients]
     # for i in ingredients:
     #     i.show()
+    return ingredients, steps
+
+def gather_base_ingredients(mappings):
+    base_ingredients = [ mappings[0][0].lower() ]
+    for m in mappings[1:]:
+        already_in_list = [b for b in base_ingredients if fuzz.partial_ratio(m[0].lower(), b.lower()) > 90]
+        if not already_in_list:
+            base_ingredients.append(m[0].lower())
+    return base_ingredients
+
+def to_very_easy(mappings, ingredients, steps):
+    ingredients, steps = to_easy(mappings, ingredients, steps)
+    ingredient_base_strs = gather_base_ingredients(mappings)
+
+    step_strs = []
+    ingredient_list_str = ''
+    for i in ingredient_base_strs[:-1]:
+        ingredient_list_str += i + ', '
+    ingredient_list_str += 'and ' + ingredient_base_strs[-1]
+
+    step_strs.append('Place ' + ingredient_list_str + ' in a large blender and blend on high until smooth')
+    step_strs.append('Pour mixture into a large bowl')
+    step_strs.append('Microwave on high for 10 minutes')
+
+    steps = []
+    for s in step_strs:
+        main = Main_step()
+        sub = Sub_step()
+        main.substeps = [sub]
+        sub.source = s
+        steps.append(main)
     return ingredients, steps
 
 def transform_ingredients(mappings, ingredients, steps, style):
@@ -131,6 +163,8 @@ def transform_ingredients(mappings, ingredients, steps, style):
 
     if style == 'to_easy':
         return to_easy(mappings, ingredients, steps)
+    if style == 'to_very_easy':
+        return to_very_easy(mappings, ingredients, steps)
 
     if style == 'to_korean':
         pass
