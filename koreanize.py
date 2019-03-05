@@ -1,6 +1,7 @@
 from parsers2 import *
 from transforming import *
 import random
+import re
 
 #new--------------------------------------------------
 HERBS = ['oregano','basil','parsley','dill','scallion','green onion','cumin','paprika','mint']
@@ -50,7 +51,7 @@ KOREAN = [
     ('wine','rice wine','wine',[],[]),
     ('olive oil','vegetable oil','oil',[],[])
 ]
-def koreanize(mappings, ingredients, steps):
+def koreanize(mappings, ingredients, steps):  
     garlic = 0
     chicken = 0
     beef = 0
