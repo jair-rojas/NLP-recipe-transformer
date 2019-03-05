@@ -47,7 +47,7 @@ def check_matches(steps,replacement):
 KOREAN = [
     [('sauce','gochu-jang','gochu-jang',[],[]),('sauce','soy sauce','soy sauce',[],[])],
     (HERBS, 'scallion and ginger','scallion and ginger',['Slice ginger as thinly as possible. Wash scallions and remove stems. Discard outer layer'],['Sprinkle gochu-garu on top for extra spice']),
-    ('bacon','spam','spam',[],[]),
+    ('sausage','spam','spam',[],[]),
     ('wine','rice wine','wine',[],[]),
     ('olive oil','vegetable oil','oil',[],[])
 ]
@@ -72,7 +72,8 @@ def koreanize(mappings, ingredients, steps):
         if re.search('chicken', ingred.item):
             chicken  = 1
         if re.search('beef', ingred.item):
-            beef = 1
+            if re.search('broth',ingred.item):pass
+            else: beef = 1
         if re.search('pork', ingred.item):
             pork = 1
     

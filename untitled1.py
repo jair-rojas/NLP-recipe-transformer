@@ -53,7 +53,7 @@ directions1 = ['Preheat oven to 375 degrees F (190 degrees C).', 'Heat the parsl
 # recipe = fetch_page.get_ingredients_and_directions(sample_recipe_url)
 
  #  API hookup -> recipe['ingredients'], recipe['directions']
-url = fetch_page.get_html('https://www.allrecipes.com/recipe/220989/maple-brined-pork-loin/?internalSource=hub%20recipe&referringContentType=Search')
+url = fetch_page.get_html('https://www.allrecipes.com/recipe/13436/italian-sausage-soup-with-tortellini/?internalSource=hub%20recipe&referringContentType=Search&clickId=cardslot%202')
 ingred1 = fetch_page.get_ingredients(url)
 directions1 = fetch_page.get_directions(url)
 
@@ -62,9 +62,9 @@ steps = parsers2.split_into_substeps(directions1)
 
 mappings = parsers2.compute_ingredient_name_mappings(ingredients, steps)
 
-ingredients, steps = untitled0.koreanize(mappings, ingredients, steps)
+#ingredients, steps = untitled0.koreanize(mappings, ingredients, steps)
 
-#ingredients, steps = healthy.to_healthy(mappings, ingredients, steps)
+ingredients, steps = healthy.to_unhealthy(mappings, ingredients, steps)
 steps = remove_dup(steps)
 
 ingredient_strs, step_strs = human_readable.reassemble(ingredients, steps)

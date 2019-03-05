@@ -75,4 +75,49 @@ def to_healthy(mappings, ingredients, steps):
                 steps = add_prep_steps(steps, template[3])
                 steps = add_finishing_steps(steps, template[4])
 
+
     return(ingredients,steps)
+
+                    
+VEGETABLES = ['romaine lettuce','spinach','cauliflower','broccoli','cucumber','squash','corn','onion','bell pepper','carrot','zucchini']
+UNHEALTHY = [('olive oil','melted butter','butter',['Melt butter by heating in pan or microwave until liquid'],[]),
+             ('butter','pork fat','fat',[],[]),
+             
+]
+
+
+def to_unhealthy(mappings, ingredients, steps):
+    ranch = 0
+    veggies = []
+    for i in ingredients:
+        print(i.item)
+        if re.search('ranch',i.item):
+            ranch == 1
+        if re.search('salt', i.item):
+            i.item = 'msg'
+        for veg in VEGETABLES:
+            if fuzz.partial_ratio(i.item, veg.lower()) > 90:
+                veggies.append(i)
+                    
+    for s in steps:
+        for ss in s.substeps:
+            if re.search('salt', ss.source):
+                ss.source = re.sub('salt', 'msg', ss.source)
+    
+    if len(veggies) > 0:
+        if len(veggies) > 1:
+            last = veggies[-1].item
+            rest = [remove_descriptors(i).item for i in veggies[:-1]]
+            if len(rest) > 1:
+                rest = [i + ',' for i in rest]
+            veggies = rest + ['and'] + [last]
+            
+        veg_str = ' '.join(veggies)
+        steps = add_prep_steps(steps, ['Deep fry ' + veg_str + ' until crispy in deep fryer'])
+    
+    
+    if ranch == 0:                
+        steps = add_finishing_steps(steps, ['Top with ranch dressing'])
+        
+    return(ingredients,steps)
+
