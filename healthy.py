@@ -118,6 +118,10 @@ def to_unhealthy(mappings, ingredients, steps):
     
     if ranch == 0:                
         steps = add_finishing_steps(steps, ['Top with ranch dressing'])
+        ingredients.append(Ingredient(1, "bottle",'ranch'))
+    if ranch == 1:
+        steps = add_finishing_steps(steps, ['Top with instant ramen flavor packet and mix'])
+        ingredients.append(Ingredient(1, "packet",'instant ramen soup base'))
         
     return(ingredients,steps)
 
