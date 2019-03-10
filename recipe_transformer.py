@@ -2,51 +2,112 @@ import human_readable
 import parsers2
 import fetch_page
 from pprint import pprint
-import transforming
-
-ingred2 = ['3 1/4 cups fusilli pasta','2 tablespoons butter','2 tablespoons all-purpose flour','2 cups milk','1 1/2 cups shredded Cheddar cheese, divided','3 teaspoons lemon juice','1/2 teaspoon mustard powder',' salt and ground black pepper to taste','15 ounces tuna packed in water, drained and flaked','1/4 cup dry bread crumbs']
-directions2 = ['Preheat the oven to 350 degrees F (175 degrees C). ',
-           'Bring a large pot of lightly salted water to a boil. Cook fusilli in the boiling water, stirring occasionally, until tender yet firm to the bite, about 12 minutes. ',
-           'Meanwhile, melt butter in a saucepan over medium heat. Whisk in flour, stirring constantly for about 1 minute. Remove from heat and gradually pour in milk, whisking constantly the entire time to avoid lumps from forming. Return to heat and cook, stirring constantly, until slightly thickened, about 2 minutes. Stir in 1/2 of the Cheddar cheese. Add lemon juice, mustard powder, salt, and pepper and mix well. ',
-           'Drain fusilli and fold into the sauce. Mix in tuna. Pour mixture into an 8-inch casserole dish and sprinkle with breadcrumbs. Top with remaining Cheddar cheese. ',
-           'Bake in the preheated oven until cheese is melted and golden, about 30 minutes.' ]
-
-ingred1 = ['18 medium taco shells','2 pounds lean ground beef','1 (14 ounce) bottle ketchup','1 (8 ounce) package shredded Cheddar cheese','1 large tomato, diced','1 cup iceberg lettuce, shredded']
-directions1 = ['Preheat oven to 375 degrees F (190 degrees C).',
-          'Warm taco shells for 5 minutes on the center rack in the preheated oven.',
-          'In a medium skillet over medium high heat, brown the beef. Halfway through browning, pour in ketchup. Stir well and let simmer for 5 minutes.',
-          'Spoon the meat mixture into the warm taco shells and top with Cheddar cheese. Return the filled taco shells to the preheated oven and bake until cheese is melted. Top each taco with a little tomato and lettuce.']
+from transforming import sub
+from koreanize import koreanize
+from healthy import to_unhealthy
+from healthy import to_healthy
 
 
-recipe_url = "https://www.allrecipes.com/recipe/22849/beef-tacos/?internalSource=hub%20recipe&referringContentType=Search&clickId=cardslot%202"  #beef tacos
+def find_input():
+    switch = input('Please input number corresponding to desired transformation: ')
+    good = 0
+    while good != 1:
+        try:
+            switch = int(switch)
+        except: 
+            pass
+        if isinstance(switch,int):
+            if (switch < 1) or (switch > 5):
+                switch = input('Error: Input out of range. Please input number corresponding to desired transformation: ')
+            else:
+                good = 1
+        else:
+            switch = input('Error: Input was not a number. Please input number corresponding to desired transformation: ')
+    return(switch)
+
+
+#recipe_url = "https://www.allrecipes.com/recipe/22849/beef-tacos/?internalSource=hub%20recipe&referringContentType=Search&clickId=cardslot%202"  #beef tacos
 # recipe_url = "https://www.allrecipes.com/recipe/223042/chicken-parmesan/?internalSource=hub%20recipe&referringContentType=Search"  #chicken parm
+def call_api(recipe_url = None):
+    if recipe_url == None:
+        recipe_url = input("Please provide a recipe url from AllRecipes.com: ")
+    
+    recipe = fetch_page.get_ingredients_and_directions(recipe_url)
+    
+    ingredients = parsers2.parse_ingredients(recipe['ingredients'])
+    steps = parsers2.split_into_substeps(recipe['directions'])
+    mappings = parsers2.compute_ingredient_name_mappings(ingredients, steps)
+    
+    print('\n-----------------------------------')
+    print('Available transformations:')
+    print('1. To Vegetarian')
+    print('2. From Vegetarian')
+    print('3. To Healthy')
+    print('4. From Healthy')
+    print('5. To Korean\n')
+    switch = find_input()
+    def transform_ingredients(mappings, ingredients, steps, style):
+        if style == 'to_vegetarian':
+            return sub(mappings, ingredients, steps, TO_VEGETARIAN)
+        if style == 'from_vegetarian':
+            return sub(mappings, ingredients, steps, FROM_VEGETARIAN)
+    
+        if style == 'healthy':
+            return sub(mappings, ingredients, steps, HEALTHY)
+        if style == 'unhealthy':
+            return sub(mappings, ingredients, steps, UNHEALTHY)
+    
+        if style == 'to_easy':
+            return to_easy(mappings, ingredients, steps)
+        if style == 'to_very_easy':
+            return to_very_easy(mappings, ingredients, steps)
+    
+        if style == 'to_korean':
+            pass
+        if style == 'hells kitchen':
+            return replace_adverbs(ingredients, steps, HELLS_KITCHEN)
+    
+        print("No transform specified")
+    
+    if switch == 1:
+        ingredients, steps = sub(mappings,ingredients,steps,'TO_VEGETARIAN')
+    if switch == 2:
+        ingredients, steps = sub(mappings,ingredients,steps,'FROM_VEGETARIAN')
+    if switch == 3:
+        ingredients, steps = to_healthy(mappings,ingredients,steps)
+    if switch == 4:
+        ingredients, steps = to_unhealthy(mappings,ingredients,steps)
+    if switch == 5:
+        ingredients, steps = koreanize(mappings,ingredients,steps)
+    
+    
+    #ingredients, steps = transforming.transform_ingredients(mappings, ingredients, steps, style)
+    
+    ingredient_strs, step_strs = human_readable.reassemble(ingredients, steps)
+    
+    print("-----------------------------------")
+    
+     #print original form
+    print('Original Recipe: ')
+    human_readable.human_readable(recipe['ingredients'], recipe['directions'])
+    
+    print("V V V V V V V V V V V V V V V V V V V V V V V V V V V V V V V V V V\n")
+    #print final form
+    print('Transformation: ')
+    human_readable.human_readable(ingredient_strs, step_strs)
+    
+    again = 0
+    while again != -1:
+        again = input('Would you like to do another transformation on this recipe? Y/N: ')
+        if again == 'Y':
+            call_api(recipe_url)
+            again = 1
+            return
+        if again == 'N':
+            again = 1
+            return
+        else:
+            print('Error: input was not "Y" or "N"')
 
-# recipe_url = input("Please provide a recipe url from AllRecipes.com:")
-
-recipe = fetch_page.get_ingredients_and_directions(recipe_url)
-
- #  API hookup -> recipe['ingredients'], recipe['directions']
-
-# recipe = {}
-# recipe['ingredients'] = ingred1
-# recipe['directions'] = directions1
-
-
-
-ingredients = parsers2.parse_ingredients(recipe['ingredients'])
-steps = parsers2.split_into_substeps(recipe['directions'])
-
-mappings = parsers2.compute_ingredient_name_mappings(ingredients, steps)
-
-ingredients, steps = transforming.transform_ingredients(mappings, ingredients, steps, 'to_very_easy')
-
-ingredient_strs, step_strs = human_readable.reassemble(ingredients, steps)
-
-print("-----------------------------------")
-
- #print original form
-human_readable.human_readable(recipe['ingredients'], recipe['directions'])
-
-print("V V V V V V V V V V V V V V V V V V V V V V V V V V V V V V V V V V\n")
-#print final form
-human_readable.human_readable(ingredient_strs, step_strs)
+call_api()
+    

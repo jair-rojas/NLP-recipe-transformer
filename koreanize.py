@@ -12,7 +12,7 @@ def check_matches(steps,replacement):
             tmp = ss.source
             #print(tmp)
             if len(re.findall('match',tmp)) > 1:
-                print(tmp)
+                #print(tmp)
                 if re.search('and match',tmp):
                     tmp = re.sub('and match',replacement,tmp)
                     tmp = re.sub('match','',tmp)
@@ -36,7 +36,7 @@ def check_matches(steps,replacement):
                                 string[idx] = ''
                     string = [x for x in string if x != '']
                     tmp = ' '.join(string)
-                    print(tmp)
+                    #print(tmp)
                     ss.source=tmp
                             
             else:
@@ -102,7 +102,7 @@ def koreanize(mappings, ingredients, steps):
             ingred_sauces.append(i)
             for m in mappings:
                     if fuzz.partial_ratio(sauce[0], m[1].lower()) > 90:  #matches long name in mappings
-                        print(m[1])
+                        #print(m[1])
                         steps = swap_ingredient(sauce[2], m[0], steps) #swap short names in directions
     for i in ingred_sauces:
         ingredients.remove(i)
@@ -121,7 +121,7 @@ def koreanize(mappings, ingredients, steps):
                 herbs.append(i)
                 for m in mappings:
                     if fuzz.partial_ratio(j, m[1].lower()) > 90:  #matches long name in mappings
-                        print(m[1],m[0])
+                        #print(m[1],m[0])
                         steps = swap_ingredient('match', m[0], steps) #swap short names in directions
     steps = check_matches(steps,'scallion and ginger')
     steps = add_prep_steps(steps, scallion[3])
@@ -139,7 +139,7 @@ def koreanize(mappings, ingredients, steps):
         for i in ingredients:
             if fuzz.partial_ratio(template[0], i.item.lower()) > 90: #matches first word of template to an ingredient
                 transform = 1
-                print(i.item)
+                #print(i.item)
                 i.item = template[1]
                 for m in mappings:
                     if fuzz.partial_ratio(template[0], m[1].lower()) > 90:  #matches long name in mappings

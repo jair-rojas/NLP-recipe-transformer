@@ -67,7 +67,7 @@ def to_healthy(mappings, ingredients, steps):
         for i in ingredients:
             if fuzz.partial_ratio(template[0], i.item.lower()) > 90: #matches first word of template to an ingredient
                 transform = 1
-                print(i.item)
+                #print(i.item)
                 i.item = template[1]
                 for m in mappings:
                     if fuzz.partial_ratio(template[0], m[1].lower()) > 90:  #matches long name in mappings
@@ -90,7 +90,7 @@ def to_unhealthy(mappings, ingredients, steps):
     ranch = 0
     veggies = []
     for i in ingredients:
-        print(i.item)
+        #print(i.item)
         if re.search('ranch',i.item):
             ranch == 1
         if re.search('salt', i.item):
