@@ -63,19 +63,15 @@ TO_VEGETARIAN = [
 ]
 
 FROM_VEGETARIAN = [
+        ('tofu', 'chicken breast', 'chicken', [], []),
+        ('seitan', 'skirt steak', 'beef', [], []),
+        ('tempeh', 'beef chuck', 'beef', [], []),
+        ('bean', 'tuna packed in water, drained', 'tuna', [], []),
+        ('lentil', 'tuna packed in water, drained', 'tuna', [], []),
+        ('vegetable stock', 'beef broth', 'broth', [], []),
+        ('vegan', 'chicken thighs, diced', 'chicken', [], []),
+        ('veget', 'chicken thighs, diced', 'chicken', [], []),
 
-]
-
-HEALTHY = [
-    ('vegetable oil', 'olive oil', 'olive oil', [], []),
-    ('canola oil', 'olive oil', 'olive oil', [], []),
-    ('butter', 'unsalted butter', 'butter', [], [])
-]
-
-UNHEALTHY = [
-    ('olive oil', 'vegetable oil', 'vegetable oil', [], []),
-    ('butter', 'salted butter', 'butter', [], []),
-    ('salt and pepper', 'lots of salt and pepper', 'salt and pepper', [], [])
 ]
 
 HELLS_KITCHEN = [ 'aggressively', 'hastily', 'belligerently' ]
@@ -211,20 +207,19 @@ def transform_ingredients(mappings, ingredients, steps, style):
     if style == 'to_vegetarian':
         return sub(mappings, ingredients, steps, TO_VEGETARIAN)
     if style == 'from_vegetarian':
-        return sub(mappings, ingredients, steps, FROM_VEGETARIAN)
+        ingredients, steps = sub(mappings, ingredients, steps, FROM_VEGETARIAN)
+        ingredients.append(Ingredient(2, "tablespoons",'bacon bits'))
+        steps = add_finishing_steps(steps, ['Top with bacon bits'])
+        return ingredients, steps
 
-    if style == 'healthy':
-        return sub(mappings, ingredients, steps, HEALTHY)
-    if style == 'unhealthy':
-        return sub(mappings, ingredients, steps, UNHEALTHY)
 
     if style == 'to_easy':
         return to_easy(mappings, ingredients, steps)
     if style == 'to_very_easy':
         return to_very_easy(mappings, ingredients, steps)
+    if style == 'stir_fry':
+        return to_stir_fry(mappings, ingredients, steps)
 
-    if style == 'to_korean':
-        pass
     if style == 'hells kitchen':
         return replace_adverbs(ingredients, steps, HELLS_KITCHEN)
 
