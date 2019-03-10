@@ -17,7 +17,7 @@ def find_input():
         except:
             pass
         if isinstance(switch,int):
-            if (switch < 1) or (switch > 9):
+            if (switch < 1) or (switch > 11):
                 switch = input('Error: Input out of range. Please input number corresponding to desired transformation: ')
             else:
                 good = 1
@@ -70,7 +70,7 @@ def call_api(recipe_url = None):
         transformation_name = 'Korean'
     if switch == 6:
         ingredients, steps = transforming.transform_ingredients(mappings,ingredients,steps,'to_easy')
-        transformation_name = 'Easy'
+        transformation_name = 'Easy (Prep Steps Removed)'
     if switch == 7:
         ingredients, steps = transforming.transform_ingredients(mappings,ingredients,steps,'to_very_easy')
         transformation_name = 'Very Easy'
