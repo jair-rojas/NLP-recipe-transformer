@@ -42,7 +42,7 @@ class Ingredient:
         print(' ')
         print('--------------------------------')
 
-UNITWORDS = set(['can','jar','pound','ounce','cup','packet', 'package', 'bottle','pinch','teaspoon','tablespoon'])
+UNITWORDS = set(['can','jar','pound','ounce','cup','packet', 'package', 'bottle','pinch','teaspoon','tablespoon','head','bunch','bundle','leaves','leaf','leave','sprig','piece','spoonful','pint','quart','gallon','stalk','spear','sheet','bar','cube','block','loaf','wheel','slice','ear','pod','clove','cluster'])
 
 def cut_s(string):
     s = string

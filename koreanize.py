@@ -49,7 +49,15 @@ KOREAN = [
     (HERBS, 'scallion and ginger','scallion and ginger',['Slice ginger as thinly as possible. Wash scallions and remove stems. Discard outer layer'],['Sprinkle gochu-garu on top for extra spice']),
     ('sausage','spam','spam',[],[]),
     ('wine','rice wine','wine',[],[]),
-    ('olive oil','vegetable oil','oil',[],[])
+    ('olive oil','vegetable oil','oil',[],[]),
+    ('broccoli','bok choy','bok choy',[],[]),
+    ('lettuce','soybean sprout','sprouts',[],[]),
+    ('beet','korean radish','radish',[],[]),
+    ('carrot','bamboo shoot','bamboo',[],[]),
+    ('bean','edamame','edamame',[],[]),
+    ('celery','garlic scapes','scapes',[],[]),
+    ('squash','eggplant','eggplant',[],[])
+    
 ]
 def koreanize(mappings, ingredients, steps):  
     garlic = 0
