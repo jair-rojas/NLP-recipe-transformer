@@ -32,6 +32,9 @@ def get_directions(html):
             directions.append(text)
     return directions
 
+def get_title(html):
+    return html.find_all(id="recipe-main-content")[-1].contents[0]
+
 # Main Function
 
 # Input: AllRecipes URL
@@ -43,4 +46,5 @@ def get_ingredients_and_directions(url):
     bs_html = get_html(url)
     recipe_dictionary["ingredients"] = get_ingredients(bs_html)
     recipe_dictionary["directions"] = get_directions(bs_html)
+    recipe_dictionary["title"] = get_title(bs_html)
     return recipe_dictionary

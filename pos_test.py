@@ -45,7 +45,7 @@ def pwords(doc):
 # print(find_nouns(doc))
 # pwords(doc)
 
-doc = nlp("sliced fresh mushrooms. ")#1 1/2 cups shredded Cheddar cheese, divided. iceberg lettuce, shredded. 15 ounces tuna packed in water, drained and flaked ")
+doc = nlp("2 cooked, boneless chicken breast halves, shredded")#1 1/2 cups shredded Cheddar cheese, divided. iceberg lettuce, shredded. 15 ounces tuna packed in water, drained and flaked ")
 # doc = nlp("2 skinless, boneless chicken breast halves")
 
 # s = ''
@@ -54,31 +54,8 @@ doc = nlp("sliced fresh mushrooms. ")#1 1/2 cups shredded Cheddar cheese, divide
 #
 # doc = nlp(s)
 
-def remove_descriptors(ingredient):
-    doc = nlp(ingredient)
-    base_ingredient = ''
-    found_start = False
-    print("---------------------------")
-    pwords(doc)
-    for tok in doc:
-        if tok.pos_ == 'NOUN' or tok.pos_ == 'PROPN' or tok.pos_ == 'PUNCT':
-            print(tok.text)
-            base_ingredient += tok.text + tok.whitespace_
-            found_start = True
-        elif found_start == True:
-            print(tok.text)
-            print(base_ingredient)
-            return ingredient
+pwords(doc)
 
-remove_descriptors("sliced fresh mushrooms. ")
 
-# def find_adverbs(doc):
-#     adverbs = []
-#     for tok in doc:
-#         if tok.pos_ == "ADV" and tok.head.pos_ == "VERB":
-#             adverbs.append(tok.text)
-#     print(adverbs)
-#
-# find_adverbs(doc)
 
 displacy.serve(doc, style='dep')
