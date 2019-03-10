@@ -1,13 +1,65 @@
 from parsers2 import *
 import random
 
-ALWAYS_REPLACE_THESE_VEGETARIAN = [ 'meat', 'fish' ]
+ALWAYS_REPLACE_THESE_VEGETARIAN = [ 'meat', 'fish', 'beef' ]
 
 #Template key --> (item_to_remove, item_to_replace_with(long version), item_to_replace_with(short version), [prep_steps], [finshing_steps])
 
 TO_VEGETARIAN = [
-    ('ground beef', 'tofu bricks', 'tofu', ['Place tofu bricks between two plates for 30 minutes until drained, then mash into a fine crumble', 'second prep step'], ['finishing step']),
-    ('cheddar cheese', 'synthetic margarine', 'margarine', [], [])
+    ('broth', 'vegetable stock', 'vegetable stock', [], []),
+
+    ('ground beef', 'tofu blocks', 'tofu', ['Place each block of tofu onto a plate and place another plate on top. Set a 3 to 5 pound weight on top (a container filled with water works well). Press the tofu for 20 to 30 minutes, then drain off and discard the accumulated liquid', 'Mash the drained tofu blocks into a fine crumble'], []),
+    ('beef brisket', 'packaged tempeh, thinly sliced', 'tempeh', [], []),
+    ('beef', 'packaged tempeh', 'tempeh', [], []),
+
+    ('lamb', 'packaged tempeh', 'tempeh', [], []),
+
+    ('ribs', 'packaged tempeh', 'tempeh', [], []),
+
+    ('pork', 'packaged seitan', 'seitan', [], []),
+    ('duck', 'packaged seitan', 'seitan', [], []),
+    ('pheasant', 'packaged seitan', 'seitan', [], []),
+    ('sheep', 'packaged seitan', 'seitan', [], []),
+    ('rabbit', 'packaged seitan', 'seitan', [], []),
+    ('venison', 'packaged seitan', 'seitan', [], []),
+    ('goose', 'packaged seitan', 'seitan', [], []),
+
+    ('sausage', 'vegeterian sausage', 'vegetarian sausage', [], []),
+
+    ('tuna packed', 'vegan toona', 'toona', [], []),
+    ('tuna in water', 'vegan toona', 'toona', [], []),
+    ('tuna drained', 'vegan toona', 'toona', [], []),
+
+    ('shrimp', 'vegan immitation shrimp', 'shrimp', [], []),
+    ('crab', 'vegan immitation crab', 'crab', [], []),
+    ('lobster', 'vegan immitation lobster', 'lobster', [], []),
+
+    ('hot dog', 'vegan immitation hot dog', 'hot dog', [], []),
+
+    ('ham', 'vegan ham', 'vegan ham', [], []),
+    ('salami', 'vegan salami', 'vegan salami', [], []),
+
+    ('bacon bits', 'veggie bacon bits', 'bacon bits', [], []),
+    ('bacon', 'veggie bacon', 'bacon', [], []),
+
+    ('chicken breasts', 'packages seitan', 'seitan', [], []),
+    ('chicken wings', 'tempeh, cut into 1 inch strips', 'tempeh', [], []),
+    ('chicken', 'tofu blocks', 'tofu', ['Place each block of tofu onto a plate and place another plate on top. Set a 3 to 5 pound weight on top (a container filled with water works well). Press the tofu for 20 to 30 minutes, then drain off and discard the accumulated liquid'], []),
+
+    ('turkey breasts', 'packages seitan', 'seitan', [], []),
+    ('turkey wings', 'tempeh, cut into 1 inch strips', 'tempeh', [], []),
+    ('turkey', 'tofu blocks', 'tofu', ['Place each block of tofu onto a plate and place another plate on top. Set a 3 to 5 pound weight on top (a container filled with water works well). Press the tofu for 20 to 30 minutes, then drain off and discard the accumulated liquid'], []),
+
+    ('salmon', 'tofu blocks', 'tofu', ['Place each block of tofu onto a plate and place another plate on top. Set a 3 to 5 pound weight on top (a container filled with water works well). Press the tofu for 20 to 30 minutes, then drain off and discard the accumulated liquid'], []),
+    ('cod', 'tofu blocks', 'tofu', ['Place each block of tofu onto a plate and place another plate on top. Set a 3 to 5 pound weight on top (a container filled with water works well). Press the tofu for 20 to 30 minutes, then drain off and discard the accumulated liquid'], []),
+    ('tilapia', 'tofu blocks', 'tofu', ['Place each block of tofu onto a plate and place another plate on top. Set a 3 to 5 pound weight on top (a container filled with water works well). Press the tofu for 20 to 30 minutes, then drain off and discard the accumulated liquid'], []),
+    ('fish', 'tofu blocks', 'tofu', ['Place each block of tofu onto a plate and place another plate on top. Set a 3 to 5 pound weight on top (a container filled with water works well). Press the tofu for 20 to 30 minutes, then drain off and discard the accumulated liquid'], []),
+    ('pollock', 'tofu blocks', 'tofu', ['Place each block of tofu onto a plate and place another plate on top. Set a 3 to 5 pound weight on top (a container filled with water works well). Press the tofu for 20 to 30 minutes, then drain off and discard the accumulated liquid'], []),
+    ('carp', 'tofu blocks', 'tofu', ['Place each block of tofu onto a plate and place another plate on top. Set a 3 to 5 pound weight on top (a container filled with water works well). Press the tofu for 20 to 30 minutes, then drain off and discard the accumulated liquid'], []),
+
+
+
+    ('steak', 'tofu blocks', 'tofu steaks', ['Place each block of tofu onto a plate and place another plate on top. Set a 3 to 5 pound weight on top (a container filled with water works well). Press the tofu for 20 to 30 minutes, then drain off and discard the accumulated liquid', 'Slice tofu blocks into steaks'], []),
 ]
 
 FROM_VEGETARIAN = [
@@ -62,10 +114,15 @@ def sub(mappings, ingredients, steps, templates):
 
             if fuzz.partial_ratio(template[0], i.item.lower()) > 90: #matches first word of template to an ingredient
                 print(i.item)
-                i.item = template[1]
+                i.item = template[1] + i.additional_prep
                 for m in mappings:
                     if fuzz.partial_ratio(template[0], m[1].lower()) > 90:  #matches long name in mappings
                         steps = swap_ingredient(template[2], m[0], steps) #swap short names in directions
+
+                        if templates == TO_VEGETARIAN:  #catch indirect references like "meat", "fish"
+                            for i in ALWAYS_REPLACE_THESE_VEGETARIAN:
+                                steps = swap_ingredient(template[2], i, steps)
+
                 steps = add_prep_steps(steps, template[3])
                 steps = add_finishing_steps(steps, template[4])
     for step in steps:
