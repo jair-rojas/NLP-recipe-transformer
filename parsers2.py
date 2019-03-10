@@ -13,6 +13,8 @@ directions1 = ['Preheat oven to 375 degrees F (190 degrees C).',
           'In a medium skillet over medium high heat, brown the beef. Halfway through browning, pour in ketchup. Stir well and let simmer for 5 minutes.',
           'Spoon the meat mixture into the warm taco shells and top with Cheddar cheese. Return the filled taco shells to the preheated oven and bake until cheese is melted. Top each taco with a little tomato and lettuce.']
 
+MEAT_SPECIFIC_VERBS = [ 'trim', 'trimmed']
+
 def find_nouns(doc):
     nouns = []
     for tok in [tok for tok in doc if tok.dep_ == 'compound' and tok.pos_ != 'VERB']: # Get list of compounds in doc
@@ -25,12 +27,13 @@ def find_nouns(doc):
 
 
 class Ingredient:
-    def __init__(self, qty, unit, item, comments = None, qty_details = None):
+    def __init__(self, qty, unit, item, comments = None, qty_details = None, additional_prep = None):
         self.qty = qty
         self.qty_details = qty_details
         self.unit = unit
         self.item = item
         self.comments = comments
+        self.additional_prep = additional_prep
 
     def show(self):
         print(' ')
@@ -52,6 +55,17 @@ def cut_s(string):
 def str_to_frac(string):
     t = string.split('/')
     return round(int(t[0])/int(t[1]),2)
+
+def parse_additional_prep(item):
+    if ',' in item:
+        comment = item.split(',')[-1]
+        doc = nlp(comment)
+        for tok in doc:
+            if tok.text in MEAT_SPECIFIC_VERBS:
+                return ''
+            if tok.pos_ == 'VERB':
+                return ',' + comment
+    return ''
 
 
 
@@ -103,8 +117,10 @@ def parse_ingredients(ingreds):
         # try:
         #     comments += line[1]
         # except: pass
+        additional_prep = parse_additional_prep(line)
 
-        parsed_ingreds.append(Ingredient(qty,unit,item,comments,qty_details))
+
+        parsed_ingreds.append(Ingredient(qty,unit,item,comments,qty_details, additional_prep = additional_prep))
 
     return(parsed_ingreds)
 

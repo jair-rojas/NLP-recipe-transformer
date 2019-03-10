@@ -14,7 +14,7 @@ def find_input():
     while good != 1:
         try:
             switch = int(switch)
-        except: 
+        except:
             pass
         if isinstance(switch,int):
             if (switch < 1) or (switch > 5):
@@ -31,13 +31,14 @@ def find_input():
 def call_api(recipe_url = None):
     if recipe_url == None:
         recipe_url = input("Please provide a recipe url from AllRecipes.com: ")
-    
+
     recipe = fetch_page.get_ingredients_and_directions(recipe_url)
-    
+
     ingredients = parsers2.parse_ingredients(recipe['ingredients'])
     steps = parsers2.split_into_substeps(recipe['directions'])
     mappings = parsers2.compute_ingredient_name_mappings(ingredients, steps)
-    
+    transformation_name = 'whoops'
+
     print('\n-----------------------------------')
     print('Available transformations:')
     print('1. To Vegetarian')
@@ -51,26 +52,27 @@ def call_api(recipe_url = None):
             return sub(mappings, ingredients, steps, TO_VEGETARIAN)
         if style == 'from_vegetarian':
             return sub(mappings, ingredients, steps, FROM_VEGETARIAN)
-    
+
         if style == 'healthy':
             return sub(mappings, ingredients, steps, HEALTHY)
         if style == 'unhealthy':
             return sub(mappings, ingredients, steps, UNHEALTHY)
-    
+
         if style == 'to_easy':
             return to_easy(mappings, ingredients, steps)
         if style == 'to_very_easy':
             return to_very_easy(mappings, ingredients, steps)
-    
+
         if style == 'to_korean':
             pass
         if style == 'hells kitchen':
             return replace_adverbs(ingredients, steps, HELLS_KITCHEN)
-    
+
         print("No transform specified")
-    
+
     if switch == 1:
         ingredients, steps = sub(mappings,ingredients,steps,'TO_VEGETARIAN')
+        transformation_name = 'Vegetarian'
     if switch == 2:
         ingredients, steps = sub(mappings,ingredients,steps,'FROM_VEGETARIAN')
     if switch == 3:
@@ -79,35 +81,36 @@ def call_api(recipe_url = None):
         ingredients, steps = to_unhealthy(mappings,ingredients,steps)
     if switch == 5:
         ingredients, steps = koreanize(mappings,ingredients,steps)
-    
-    
+
+
     #ingredients, steps = transforming.transform_ingredients(mappings, ingredients, steps, style)
-    
+
     ingredient_strs, step_strs = human_readable.reassemble(ingredients, steps)
-    
+
+
     print("-----------------------------------")
-    
+
      #print original form
     print('Original Recipe: ')
     human_readable.human_readable(recipe['ingredients'], recipe['directions'])
-    
+
     print("V V V V V V V V V V V V V V V V V V V V V V V V V V V V V V V V V V\n")
     #print final form
     print('Transformation: ')
+    print(recipe['title'] + ' --> ' + transformation_name + '\n\n')
     human_readable.human_readable(ingredient_strs, step_strs)
-    
+
     again = 0
     while again != -1:
         again = input('Would you like to do another transformation on this recipe? Y/N: ')
-        if again == 'Y':
+        if again.lower() == 'y':
             call_api(recipe_url)
             again = 1
             return
-        if again == 'N':
+        if again.lower() == 'n':
             again = 1
             return
         else:
             print('Error: input was not "Y" or "N"')
 
 call_api()
-    
