@@ -203,6 +203,29 @@ def to_very_easy(mappings, ingredients, steps):
         steps.append(main)
     return ingredients, steps
 
+def to_stew(mappings, ingredients, steps):
+    ingredients, steps = to_easy(mappings, ingredients, steps)
+    ingredient_base_strs = gather_base_ingredients(mappings)
+
+    step_strs = []
+    ingredient_list_str = ''
+    for i in ingredient_base_strs[:-1]:
+        ingredient_list_str += i + ', '
+    ingredient_list_str += 'and ' + ingredient_base_strs[-1]
+
+    step_strs.append('Place ' + ingredient_list_str + ' in a large stew pot')
+    step_strs.append('Fill the rest of the pot with water')
+    step_strs.append('Cook over low heat for 4 hours, stirring occasionally')
+
+    steps = []
+    for s in step_strs:
+        main = Main_step()
+        sub = Sub_step()
+        main.substeps = [sub]
+        sub.source = s
+        steps.append(main)
+    return ingredients, steps
+
 def transform_ingredients(mappings, ingredients, steps, style):
     if style == 'to_vegetarian':
         return sub(mappings, ingredients, steps, TO_VEGETARIAN)
@@ -217,10 +240,10 @@ def transform_ingredients(mappings, ingredients, steps, style):
         return to_easy(mappings, ingredients, steps)
     if style == 'to_very_easy':
         return to_very_easy(mappings, ingredients, steps)
-    if style == 'stir_fry':
-        return to_stir_fry(mappings, ingredients, steps)
+    if style == 'stew':
+        return to_stew(mappings, ingredients, steps)
 
-    if style == 'hells kitchen':
+    if style == 'hells_kitchen':
         return replace_adverbs(ingredients, steps, HELLS_KITCHEN)
 
-    print("No transform specified")
+    print("\nNo transform specified\n")

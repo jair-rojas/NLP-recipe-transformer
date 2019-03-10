@@ -48,7 +48,7 @@ def call_api(recipe_url = None):
     print('5. To Korean')
     print('6. To Easy')
     print('7. To Very Easy')
-    print('8. To Stir Fry')
+    print('8. To Stew')
     print('9. Hell\'s Kitchen')
     switch = find_input()
 
@@ -74,9 +74,9 @@ def call_api(recipe_url = None):
     if switch == 7:
         ingredients, steps = transforming.transform_ingredients(mappings,ingredients,steps,'to_very_easy')
         transformation_name = 'Very Easy'
-    # if switch == 8:
-    #     ingredients, steps = transforming.transform_ingredients(mappings,ingredients,steps,'stir_fry')
-    #     transformation_name = 'Stir Fry'
+    if switch == 8:
+        ingredients, steps = transforming.transform_ingredients(mappings,ingredients,steps,'stew')
+        transformation_name = 'Stew'
     if switch == 9:
         ingredients, steps = transforming.transform_ingredients(mappings,ingredients,steps,'hells_kitchen')
         transformation_name = 'Agressive adverbs'

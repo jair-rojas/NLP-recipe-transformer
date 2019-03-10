@@ -81,11 +81,11 @@ def to_healthy(mappings, ingredients, steps):
 
     return(ingredients,steps)
 
-                    
+
 VEGETABLES = list(set(['romaine lettuce','spinach','cauliflower','broccoli','cucumber','squash','corn','onion','bell pepper','carrot','zucchini','iceberg lettuce','asparagus','bean','bamboo','beet','bok choy']))
 UNHEALTHY = [('olive oil','melted butter','butter',['Melt butter by heating in pan or microwave until liquid'],[]),
              ('butter','pork fat','fat',[],[]),
-             
+
 ]
 
 #unhealthy
@@ -106,14 +106,14 @@ def to_unhealthy(mappings, ingredients, steps):
         for veg in VEGETABLES:
             if fuzz.partial_ratio(i.item, veg.lower()) > 90:
                 veggies.append(i)
-                    
+
     for s in steps:
         for ss in s.substeps:
             if re.search('salt', ss.source):
                 ss.source = re.sub('salt', 'msg', ss.source)
             if re.search('lean', ss.source):
                 ss.source = re.sub('lean', 'fatty', ss.source)
-    
+
     vegg = copy.deepcopy(veggies)
     veg = [remove_descriptors(i).item.strip() for i in vegg]
     veg = list(set(veg))
@@ -124,9 +124,9 @@ def to_unhealthy(mappings, ingredients, steps):
             if len(rest) > 1:
                 rest = [i + ',' for i in rest]
             veg = rest + ['and'] + [last]
-            
+
         veg_str = ' '.join(veg)
-        steps = add_prep_steps(steps, ['Deep fry ' + veg_str + ' until crispy in deep fryer']) 
+        steps = add_prep_steps(steps, ['Deep fry ' + veg_str + ' until crispy in deep fryer'])
         transform = 1
 
     for template in UNHEALTHY:
@@ -140,8 +140,8 @@ def to_unhealthy(mappings, ingredients, steps):
                         steps = swap_ingredient(template[2], m[0], steps) #swap short names in directions
                 steps = add_prep_steps(steps, template[3])
                 steps = add_finishing_steps(steps, template[4])
-        
-    #if ranch == 0:                
+
+    #if ranch == 0:
     #    steps = add_finishing_steps(steps, ['Top with ranch dressing'])
     #    ingredients.append(Ingredient(1, "bottle",'ranch'))
     #if ranch == 1:
@@ -149,9 +149,8 @@ def to_unhealthy(mappings, ingredients, steps):
     #    ingredients.append(Ingredient(1, "packet",'instant ramen soup base'))
     if transform == 0:
         steps = add_prep_steps(steps, ['Place frozen french fries in microwave and heat on high for 5 minutes.'])
-        steps = add_finishing_Steps(steps, ['Serve with french fries on the side'])
-        ingredients.append(Ingredient(1, 'bag', 'store bough frozen french fries'))
-    
-    
-    return(ingredients,steps)
+        steps = add_finishing_steps(steps, ['Serve with french fries on the side'])
+        ingredients.append(Ingredient(1, 'bag', 'store bought frozen french fries'))
 
+
+    return(ingredients,steps)
