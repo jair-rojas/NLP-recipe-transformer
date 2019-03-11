@@ -1,6 +1,7 @@
 import re
 import spacy
 
+from METHODS import METHODS
 from fuzzywuzzy import fuzz
 
 nlp = spacy.load('en_core_web_sm')
@@ -46,6 +47,9 @@ class Ingredient:
         print('--------------------------------')
 
 UNITWORDS = set(['can','jar','pound','ounce','cup','packet', 'package', 'bottle','pinch','teaspoon','tablespoon','head','bunch','bundle','leaves','leaf','leave','sprig','piece','spoonful','pint','quart','gallon','stalk','spear','sheet','bar','cube','block','loaf','wheel','slice','ear','pod','clove','cluster'])
+TOOLS = set(['pan','pot','oven','bowl','blender','wok','skillet','fryer','grill','steamer','cooker','range','maker','iron'])
+TIME = set(['hour','minute','second','overnight'])
+METHODS = set(METHODS)
 
 def cut_s(string):
     s = string
@@ -179,6 +183,71 @@ def split_into_substeps(directions):
         split_steps.append(main)
     return split_steps
 
+def substeps_with_addons(directions, ingredient_objs):
+    split_steps = []
+    ingredient_nouns = sorted(set([i.item for i in ingredient_objs]), key=len)
+
+    for step in directions:
+        main = Main_step()
+        main.source = step
+        parsed_substeps = []
+
+        for substep in step.split('.')[:-1]:
+            #actual step
+            ss_obj = Sub_step()
+            ss_obj.source = substep
+            
+            
+            nouns = []
+            doc = nlp(substep)
+            nouns += find_nouns(doc)
+        
+            sorted_nouns = sorted(set(nouns), key=len, reverse=True)
+            
+            #ingredients in each step
+            mappings = []
+            for noun in sorted_nouns:
+                for i in ingredient_nouns:
+                    if fuzz.partial_ratio(noun, i) > 90 and len(noun) <= len(i):
+                        mappings.append(noun)
+            
+            ss_obj.ingredients = mappings
+            
+            #find tools
+            tools = []
+            for word in substep.split():
+                if cut_s(word).lower() in TOOLS:
+                    tools.append(word)
+            ss_obj.tools = tools
+            
+            #time
+            time = []
+            for i in range(len(substep.split())):
+                word = substep.split()[i].lower()
+                if cut_s(word) in TIME:
+                    if word == 'overnight':
+                        time.append('overnight')
+                    else:
+                        prev = ''
+                        try:
+                            prev = substep.split()[i-1]
+                        except: 
+                            prev = 'a couple'
+                        time.append(prev + ' ' + word)
+            ss_obj.time = time
+            
+            methods = []
+            for word in substep.split():
+                
+                if word.capitalize() in METHODS:
+                    methods.append(word)
+            ss_obj.method = methods
+            
+            parsed_substeps.append(ss_obj)
+
+        main.substeps = parsed_substeps
+        split_steps.append(main)
+    return split_steps
 
 def compute_ingredient_name_mappings(ingredient_objs, steps):
     ingredient_nouns = sorted(set([i.item for i in ingredient_objs]), key=len)
