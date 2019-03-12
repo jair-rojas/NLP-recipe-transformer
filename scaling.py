@@ -136,6 +136,8 @@ def convert_to_metric(ingred):
         except KeyError:
             print("     *Unit below was not accounted for")
 
+    ingred.qty_details = " "
+
 def convert_all(ingreds, steps):
     for i in ingreds:
         convert_to_metric(i)
