@@ -1,5 +1,6 @@
 from parsers2 import *
 import random
+from scaling import *
 
 ALWAYS_REPLACE_THESE_VEGETARIAN = [ 'meat', 'fish', 'beef' ]
 
@@ -226,7 +227,7 @@ def to_stew(mappings, ingredients, steps):
         steps.append(main)
     return ingredients, steps
 
-def transform_ingredients(mappings, ingredients, steps, style):
+def transform_ingredients(mappings, ingredients, steps, style, scaling_factor=1):
     if style == 'to_vegetarian':
         return sub(mappings, ingredients, steps, TO_VEGETARIAN)
     if style == 'from_vegetarian':
@@ -234,7 +235,6 @@ def transform_ingredients(mappings, ingredients, steps, style):
         ingredients.append(Ingredient(2, "tablespoons",'bacon bits'))
         steps = add_finishing_steps(steps, ['Top with bacon bits'])
         return ingredients, steps
-
 
     if style == 'to_easy':
         return to_easy(mappings, ingredients, steps)
@@ -245,5 +245,10 @@ def transform_ingredients(mappings, ingredients, steps, style):
 
     if style == 'hells_kitchen':
         return replace_adverbs(ingredients, steps, HELLS_KITCHEN)
+
+    if style == 'scale_recipe':
+        return scale_all(ingredients, steps, scaling_factor)
+    if style == 'use_metric':
+        return convert_all(ingredients, steps)
 
     print("\nNo transform specified\n")

@@ -2,8 +2,7 @@ import re
 import spacy
 
 nlp = spacy.load('en_core_web_sm')
-
-test_ingredients = ['18 medium taco shells','2 pounds lean ground beef','1 (14 ounce) bottle ketchup','1 (8 ounce) package shredded Cheese','1 large tomato, diced','1 cup iceberg lettuce, shredded', '3 1/4 cups fusilli pasta','2 tablespoons butter','2 tablespoons all-purpose flour','2 cups milk','1 1/2 cups shredded Cheddar cheese, divided','3 teaspoons lemon juice','1/2 teaspoon mustard powder',' salt and ground black pepper to taste','15 ounces tuna packed in water, drained and flaked','1/4 cup dry bread crumbs']
+# test_ingredients = ['18 medium taco shells','2 pounds lean ground beef','1 (14 ounce) bottle ketchup','1 (8 ounce) package shredded Cheese','1 large tomato, diced','1 cup iceberg lettuce, shredded', '3 1/4 cups fusilli pasta','2 tablespoons butter','2 tablespoons all-purpose flour','2 cups milk','1 1/2 cups shredded Cheddar cheese, divided','3 teaspoons lemon juice','1/2 teaspoon mustard powder',' salt and ground black pepper to taste','15 ounces tuna packed in water, drained and flaked','1/4 cup dry bread crumbs']
 
 class Ingredient:
     def __init__(self, qty, unit, item, comments = None, qty_details = None):
@@ -25,18 +24,19 @@ class Ingredient:
 
 UNITWORDS = set(['can','jar','pound','ounce','cup','packet','bottle','pinch','teaspoon','tablespoon'])
 
+# Parsing Functions
 # Remove 's' character from string
 def cut_s(string):
     s = string
     if s.endswith('s'): s = s[:-1]
     return(s)
 
-# 
+# Convert to integers
 def str_to_frac(string):
     t = string.split('/')
     return int(t[0])/int(t[1])
 
-# 
+# Parse important information into class methods
 def parse_ingredients(ingreds):
     paren_pat = re.compile(r'\((.*?)\)')
 
@@ -86,22 +86,12 @@ def parse_ingredients(ingreds):
         
     return(parsed_ingreds)
 
-parsed = parse_ingredients(test_ingredients)
-
+# parsed = parse_ingredients(test_ingredients)
 # for i in parsed:
 #     i.show()
 
 
 # Scaling Functions
-# teaspoon = ["tablespoon": 3, "cup": 48, "pint": 96, "quart": 192, "gallon": 768]
-# tablespoon = ["teaspoon": .33, "cup": 16, "pint": 32, "quart": 64, "gallon": 256]
-# cup = ["teaspoon": .02, "tablespoon": .06, "pint": 2, "quart": 4, "gallon": 16]
-# pint = ["teaspoon": .01, "tablespoon": .03, "cup": .5, "quart": , "gallon": 8]
-# quart = ["teaspoon": .005, "tablespoon": .01, "cup": 4, "pint": 192, "gallon": 768]
-# gallon = ["teaspoon": .001, "tablespoon": 48, "cup": 96, "pint": 192, "quart": 768]
-# ounce = ["pound": 16]
-# pound = ["ounce": .06]
-
 def scale_ingredient(ingred, scaling_factor):
     new_amount = ingred.qty * scaling_factor
     
@@ -119,15 +109,10 @@ def scale_ingredient(ingred, scaling_factor):
 
     ingred.qty = new_amount
 
-    # Convert units
-        # 
-
-    print(ingred.qty, ingred.unit)
-    return ingred
-
-def scale_all(ingreds, scaling_factor):
+def scale_all(ingreds, steps, scaling_factor):
     for i in ingreds:
         scale_ingredient(i, scaling_factor)
+    return ingreds, steps
 
 
 # Metric Functions
@@ -151,21 +136,7 @@ def convert_to_metric(ingred):
         except KeyError:
             print("     *Unit below was not accounted for")
 
-    print(ingred.qty, ingred.unit)
-    return ingred
-
-def convert_all(ingreds):
+def convert_all(ingreds, steps):
     for i in ingreds:
         convert_to_metric(i)
-
-# Testing scaling functions
-for p in parsed:
-    print(p.qty, p.unit)
-print("//////////////////////////////////")
-scale_all(parsed, 20)
-
-# # Testing converting functions
-# for p in parsed:
-#      print(p.qty, p.unit)
-# print("//////////////////////////////////")
-# convert_all(parsed)
+    return ingreds, steps
